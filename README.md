@@ -1,0 +1,2 @@
+## Image restoration using Markov random field models
+This repository holds implementation of Markov chain Monte Carlo methods, namely Gibbs Sampler and Metropolis Sampler. Its purpose is to show how to combine Bayesian approach, Markov random field models, and the Ising Model for restoring monochrome (black & white) images from noise
