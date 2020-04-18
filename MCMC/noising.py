@@ -37,7 +37,7 @@ def save_image(filename, image):
     cv2.imwrite('Images/' + filename + '.png', image)
 
 if __name__ == '__main__':
-    test_sp_noise('Images/cat.jpg')
+    test_sp_noise('Images/cat_bw.png')
 
 def add_gaussian_noise(image_in, noise_sigma):
     temp_image = np.float64(np.copy(image_in))

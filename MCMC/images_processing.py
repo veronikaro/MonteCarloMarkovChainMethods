@@ -28,7 +28,6 @@ def convert_to_monochrome(image_path):
     # pixels = im.getdata()  # 0 is black, 255 is white
     # to-do: substitute 255 to 1
 
-
 # Convert a colored image to black & white and greyscale images using OpenCV library. Show them in new windows
 def convert_to_bw_and_greyscale(image_path):
     original_image = cv2.imread(image_path)
@@ -51,10 +50,17 @@ def save_image(filename, image):
 def open_image_in_window(title, image):
     cv2.imshow(title, image)
 
-if __name__ == '__main__':
-    # efficient_way_to_read_images()
-    convert_to_bw_and_greyscale('Images/cat.jpg')
 
+def resize(image, scale_percent):
+    width = int(image.shape[1] * scale_percent / 100)
+    height = int(image.shape[0] * scale_percent / 100)
+    new_dim = (width, height)
+    resized_im = cv2.resize(image, new_dim, interpolation=cv2.INTER_AREA)
+    return resized_im
+
+if __name__ == '__main__':
+    convert_to_bw_and_greyscale('Images/cat.jpg')
+    #convert_to_bw_and_greyscale('Images/cat.jpg')
 
 def convert_to_monochrome():
     '''
