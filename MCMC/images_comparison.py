@@ -3,6 +3,8 @@ from skimage.metrics import structural_similarity
 import argparse
 import imutils
 import cv2
+import matplotlib.pyplot as plt
+
 
 # For reading arguments passed from the command line
 # arg_parser = argparse.ArgumentParser()
@@ -14,21 +16,14 @@ import cv2
 # imageA = cv2.imread(args["first"])
 # imageB = cv2.imread(args["second"])
 
-# Read directly from the file system
 
-imageA = cv2.imread('Images/cat_bw.png')
-imageB = cv2.imread('AfterSampling2000000.png')
-
-
-def ssi():
+def ssi(imageX, imageY):
     """Calculate the Structural Similarity Index (SSIM) between the two images and show the difference image.
      The index takes values between -1 and 1, where 1 is a perfect similarity.
     """
-    (score, diff) = structural_similarity(imageA, imageB, full=True, multichannel=True)
+    (score, diff) = structural_similarity(imageX, imageY, full=True, multichannel=True)
     diff = (diff * 255).astype("uint8")
-    print("SSIM: {}".format(score))
-    cv2.imshow("Difference", diff)
-    cv2.waitKey(0)
+    return (score, diff)
 
 
 def mse(imageX, imageY):
@@ -36,3 +31,30 @@ def mse(imageX, imageY):
     error = np.sum((imageX.astype("float") - imageY.astype("float")) ** 2)
     error /= float(imageX.shape[0] * imageX.shape[1])  # divide the sum of squares by the overall number of pixels
     return error
+
+
+def compare_with_metrics(imageX, imageY, name):
+    """Compare the given images using the MSE and SSI metrics."""
+    mean_sq_err = mse(imageX, imageY)
+    structural_sim_score, diff_image = ssi(imageX, imageY)
+    figure = plt.figure(name)
+    plt.suptitle("SSIM: {0}, MSE: {1}".format(structural_sim_score, mean_sq_err))
+    # add the first image to the plot
+    axis_1 = figure.add_subplot(1, 2, 1)
+    plt.imshow(imageX, cmap=plt.cm.gray)
+    plt.axis(False)
+    # add the second image to the plot
+    axis_2 = figure.add_subplot(1, 2, 2)
+    plt.imshow(imageY, cmap=plt.cm.gray)
+    plt.axis(False)
+    plt.show()
+
+if __name__ == '__main__':
+    # Read directly from the file system
+    imageX = cv2.imread('Images/cat_bw.png')
+    imageY = cv2.imread('AfterSampling2000000.png')
+    compare_with_metrics(imageX, imageY, 'Original vs Denoised')
+    # score, diff = ssi(imageX, imageY)
+    # print("SSIM: {}".format(score))
+    # cv2.imshow("Difference", diff)
+    # cv2.waitKey(0)
