@@ -25,7 +25,7 @@ def sp_noise(image, prob):
 
 def test_sp_noise(image_path):
     image = cv2.imread(image_path, 0)
-    noise_img = sp_noise(image, 0.05)  # only 5% of noise is added. You can vary the percentage of added noise
+    noise_img = sp_noise(image, 0.2)  # only 5% of noise is added. You can vary the percentage of added noise
     filename = image_path[7:-4] + '_noisy'
     save_image(filename, noise_img)
     cv2.imshow('Noised image', noise_img)

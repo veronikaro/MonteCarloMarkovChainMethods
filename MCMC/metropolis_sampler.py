@@ -4,7 +4,6 @@ import random
 import cython
 from math import exp, log
 from MCMC.images_processing import *
-from itertools import repeat
 import cv2
 
 
@@ -24,29 +23,37 @@ def convert_image_to_ising_model(image):
     '''
     return image
 
+
 def convert_from_ising_to_image(image):
+    """Convert the Ising representation of an image to the standard image format with pixels' intensities."""
     image[np.where(image == [-1])] = [0]
     image[np.where(image == [1])] = [255]
     return image
 
-# Calculate an acceptance probability of flipping the pixel or not.
-# Accepts a monochrome image with pixel intensities converted to -1 and +1
+
 def clique_energy(image, pixel_position):
+    """Calculate the local energy of pixels in the neighborhood."""
     neighbors = get_all_neighbors(pixel_position, image.shape)
     pixel_intensities = []
     for n in neighbors:
         pixel_intensities.append(image[n])
     return sum(pixel_intensities)
 
+def acceptance_probability(beta, pi, image, random_pixel_position):
+    """Calculate an acceptance probability of flipping a given pixel.
 
-def acceptance_probability(beta, gamma, image, random_pixel_position):
-    # gamma = 0.5 * log((1 - pi) / pi)
+        Keyword arguments:
+        beta -- ?
+        pi -- ?
+        image -- a monochrome image with pixel intensities converted to -1 and +1; our prior belief of an image, X
+        random_pixel_position -- pixel to be flipped or not
+        """
+    gamma = 0.5 * log((1 - pi) / pi)  # external_factor [
     neighbors_energy = clique_energy(image, random_pixel_position)
     i, j = random_pixel_position
     current_pixel_value = image[i][j]
     # There's something wrong here TODO: change posterior calculation
-    posterior = np.exp(
-        -2 * gamma * current_pixel_value * current_pixel_value - 2 * beta * current_pixel_value * neighbors_energy)
+    posterior = -2 * gamma * current_pixel_value * current_pixel_value - 2 * beta * current_pixel_value * neighbors_energy  # posterior function
     return posterior
 
 
@@ -63,16 +70,11 @@ def reduce_channels_for_sampler(image):
     # print(image[i][j])
 
 
-def restore_channels(image, n_channel):
-    w = image.shape[0]
-    h = image.shape[1]
-    new_image = np.ndarray(shape=(w, h), dtype='int8')
-    for i in range(w):  # rows
-        for j in range(h):  # columns
-            pixel = image[i, j] * 3
-            pixels = image[i, j] * 3 #np.repeat(pixel, n_channel)
-            new_image[i, j] = pixels #[pixel for n in range(n_channel)]
-    return new_image
+# Accepts an image in ndarray format
+def restore_channels(image, n_channels):
+    width, height, m = image.shape[0], image.shape[1], 1
+    arr = image.reshape(width, height)
+    return np.repeat(arr, m * n_channels).reshape(width, height, n_channels)
 
 
 def within_boundaries(x, dim):  # check if pixel is within boundaries of a matrix
@@ -108,40 +110,39 @@ def get_all_neighbors(position, image_dimensions,
     neighbors = [x for x in neighbors if
                  within_boundaries(x,
                                    image_dimensions)]  # check if all coordinates are positive and each pixel lies within boundaries
-    print("Neighbors for {0}:".format(position))
-    print(neighbors)
+    # print("Neighbors for {0}:".format(position)) # for debugging: checking if neighbors are defined correctl
+    # print(neighbors)
     return neighbors
 
 
 def run_metropolis_sampler(image):
-    # arbitrary beta and gamma
-    beta = 0.4
-    gamma = 1.0
-    pi = 0.1
+    """Run the Metropolis sampler for a given noised image."""
+    # arbitrary beta and pi TODO: How beta, pi and gamma can be interpreted?
+    beta = 0.8
+    # gamma = 1.0
+    pi = 0.15
     # print("Before:")
     # print(image.shape)
-    image = reduce_channels_for_sampler(image)
-    image = convert_image_to_ising_model(image)  # our prior belief of an image, X
-    time = range(0, 1000)
-    width, height = image.shape[0], image.shape[1]
+    image = reduce_channels_for_sampler(image)  # convert a 3-channel image to 1-channel one
+    image = convert_image_to_ising_model(image)
+    time = range(0, 2000000)
+    width, height = image.shape[0], image.shape[1]  # dimensions
     for t in time:
         i, j = random.randint(0, width - 1), random.randint(0, height - 1)
-        flip_value = - image[i, j]
+        flipped_value = - image[i, j]
         pixel_position = (i, j)
-        alpha = acceptance_probability(beta, gamma, image, pixel_position)
-        if alpha >= 1:
-            image[i][j] = flip_value
-        else:
-            random_number = random.random()
-            if random_number <= alpha:
-                image[i][j] = flip_value
-    sampled_image = restore_channels(image, 3)
-    sampled_image = convert_from_ising_to_image(sampled_image)
-    cv2.imwrite('AfterSampling.png', sampled_image)
+        alpha = acceptance_probability(beta, pi, image, pixel_position)
+        random_number = random.random()
+        if np.log(random_number) < alpha:
+            image[i][j] = flipped_value
+    sampled_image = convert_from_ising_to_image(image)
+    sampled_image = restore_channels(sampled_image, 3)
+    print(sampled_image.shape)
+    cv2.imwrite('AfterSamplingIm{}.png'.format(len(time)), sampled_image)
 
 
-# Accepts a list
 def all_elements_unique(items_list):
+    """Check if all elements on the list are unique."""
     items_set = set(items_list)
     if len(items_set) == len(items_list):
         return True
@@ -149,6 +150,7 @@ def all_elements_unique(items_list):
 
 
 def all_elements_equal(items_list):
+    """Check if all elements on the list are equalt."""
     items_set = set(items_list)
     if len(items_set) == 1:
         return True
@@ -171,9 +173,26 @@ def testing_images_structure(image):
 
 if __name__ == '__main__':
     image = cv2.imread('Images/cat_bw_noisy.png')
-    print(image.shape)
-    #run_metropolis_sampler(image)
+    run_metropolis_sampler(image)
+    # print(image.shape)
+    # t = timeit.Timer('run_metropolis_sampler(image)', globals=locals())
+    # print(t.timeit(number=3))
+    # t = timeit.Timer(run_metropolis_sampler(image))
+    # timeit.timeit('run_metropolis_sampler(image), 'from __main__ import run_metropolis_sampler, image', number=3)
+    # print(alg_time)
     # testing_images_structure()
     # print(reduce_channels_for_sampler(image))
     # print(timeit.timeit(testing_images_structure, number=2))
     # 0print(len(image[6][10]))
+
+'''
+def restore_channels(image, n_channel):
+    w = image.shape[0]
+    h = image.shape[1]
+    new_image = np.ndarray(shape=(w, h), dtype='int8')
+    for i in range(w):  # rows
+        for j in range(h):  # columns
+            pixels = image[i, j] * n_channel #np.repeat(pixel, n_channel)
+            new_image[i, j] = pixels #[pixel for n in range(n_channel)]
+    return new_image
+'''
