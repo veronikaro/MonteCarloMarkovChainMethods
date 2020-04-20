@@ -7,20 +7,12 @@ from MCMC.images_processing import *
 import cv2
 
 
-# TO-DO: describe all parameters used in the algorithm
+# TODO: describe all parameters used in the algorithm
 
 def convert_image_to_ising_model(image):
-    converted = []
+    """Convert the image to the Ising model representation (with a spin space = {-1, 1})."""
     image[np.where(image == [0])] = [-1]
     image[np.where(image == [255])] = [1]
-    '''
-    for i in range(image.shape[0]):
-        for j in range(image.shape[1]):
-            if image[i][j] == 0:
-                image[i][j] = -1
-            elif image[i][j] == 255:
-                image[i][j] = 1
-    '''
     return image
 
 
@@ -32,33 +24,36 @@ def convert_from_ising_to_image(image):
 
 
 def clique_energy(image, pixel_position):
-    """Calculate the local energy of pixels in the neighborhood."""
+    """Calculate the local energy of pixels in the neighborhood of a given pixel."""
     neighbors = get_all_neighbors(pixel_position, image.shape)
     pixel_intensities = []
     for n in neighbors:
         pixel_intensities.append(image[n])
     return sum(pixel_intensities)
 
-def acceptance_probability(beta, pi, image, random_pixel_position):
-    """Calculate an acceptance probability of flipping a given pixel.
 
-        Keyword arguments:
-        beta -- ?
-        pi -- ?
-        image -- a monochrome image with pixel intensities converted to -1 and +1; our prior belief of an image, X
-        random_pixel_position -- pixel to be flipped or not
-        """
-    gamma = 0.5 * log((1 - pi) / pi)  # external_factor [
+def acceptance_probability(beta, pi, image, random_pixel_position):
+    """
+    Calculate an acceptance probability of flipping a given pixel.
+
+    :param beta: ?
+    :param pi: ?
+    :param image: a monochrome image with pixel intensities converted to -1 and +1; our prior belief of an image, X
+    :param random_pixel_position: coordinates of a given pixel to be flipped or not
+    :return: a floating point number - posterior probability
+    """
+    gamma = 0.5 * log((1 - pi) / pi)  # external_factor
     neighbors_energy = clique_energy(image, random_pixel_position)
     i, j = random_pixel_position
     current_pixel_value = image[i][j]
-    # There's something wrong here TODO: change posterior calculation
+    # TODO: double-check posterior calculation
     posterior = -2 * gamma * current_pixel_value * current_pixel_value - 2 * beta * current_pixel_value * neighbors_energy  # posterior function
     return posterior
 
 
-# Reduces an image to 1-channel image
+# TODO: think how to improve for better performance when iterating over pixels.
 def reduce_channels_for_sampler(image):
+    """Reduce a 3-channel image to 1-channel image."""
     w = image.shape[0]
     h = image.shape[1]
     new_image = np.ndarray(shape=(w, h))  # create a new array for pixel values
@@ -66,23 +61,29 @@ def reduce_channels_for_sampler(image):
         for j in range(h):  # columns
             new_image[i][j] = image[i, j][:1]
     return new_image
-    # if not all_elements_equal(image[i][j]):
-    # print(image[i][j])
 
 
-# Accepts an image in ndarray format
 def restore_channels(image, n_channels):
+    """
+    Convert 1-channel image to n-channel image.
+
+    :param image: an image in ndarray format
+    :param n_channels: target number of channels
+    :return: ndarray with image's pixels' intensities
+    """
     width, height, m = image.shape[0], image.shape[1], 1
     arr = image.reshape(width, height)
     return np.repeat(arr, m * n_channels).reshape(width, height, n_channels)
 
 
-def within_boundaries(x, dim):  # check if pixel is within boundaries of a matrix
+def within_boundaries(x, dim):
+    """Check if a pixel lies within boundaries of a matrix."""
     width, height = dim[0], dim[1]
     return 0 <= x[0] < width and 0 <= x[1] < height
 
 
 def choose_random_neighbor(neighbors):
+    """Choose a random neighbor from the given ones."""
     random_neighbor = random.choice(neighbors)
     return random_neighbor
 
@@ -90,6 +91,14 @@ def choose_random_neighbor(neighbors):
 # If diagonal_neighbors = True, the clique contains 8 sites
 def get_all_neighbors(position, image_dimensions,
                       diagonal_neighbors=True):  # let's try passing tuple with pixel's position instead of one number
+    """
+    Find the given pixel's neighbors
+
+    :param position: a tuple with two pixel's coordinates
+    :param image_dimensions: a tuple with image's width and height
+    :param diagonal_neighbors: boolean to decide whether to find diagonals neighbors of a given pixel. If True, the clique contains 8 sites. Default: True
+    :return: a list of tuples with coordinates of the given pixel's neighbors
+    """
     i, j = position  # unpacking the tuple
     neighbors = []
     left_neighbor = (i, j - 1)
@@ -110,13 +119,13 @@ def get_all_neighbors(position, image_dimensions,
     neighbors = [x for x in neighbors if
                  within_boundaries(x,
                                    image_dimensions)]  # check if all coordinates are positive and each pixel lies within boundaries
-    # print("Neighbors for {0}:".format(position)) # for debugging: checking if neighbors are defined correctl
+    # print("Neighbors for {0}:".format(position)) # for debugging: checking if neighbors are defined correctly
     # print(neighbors)
     return neighbors
 
 
 def run_metropolis_sampler(image):
-    """Run the Metropolis sampler for a given noised image."""
+    """Run the Metropolis sampler for the given noised image."""
     # arbitrary beta and pi TODO: How beta, pi and gamma can be interpreted?
     beta = 0.8
     # gamma = 1.0
@@ -138,7 +147,7 @@ def run_metropolis_sampler(image):
     sampled_image = convert_from_ising_to_image(image)
     sampled_image = restore_channels(sampled_image, 3)
     print(sampled_image.shape)
-    cv2.imwrite('AfterSamplingIm{}.png'.format(len(time)), sampled_image)
+    cv2.imwrite('DenoisedIm_Iter={}.png'.format(len(time)), sampled_image)
 
 
 def all_elements_unique(items_list):
@@ -150,25 +159,11 @@ def all_elements_unique(items_list):
 
 
 def all_elements_equal(items_list):
-    """Check if all elements on the list are equalt."""
+    """Check if all elements on the list are equal."""
     items_set = set(items_list)
     if len(items_set) == 1:
         return True
     return False
-
-
-def testing_images_structure(image):
-    w = image.shape[0]
-    h = image.shape[1]
-    print(image[4, 4])
-    # when iterating, remember that images may not be square
-    T = 128
-    # for i in range(w):  # rows
-    # for j in range(h):  # columns
-    # image[i, j] = 0 if (image[i, j] <= T).any() else 255
-    # for k in range(len(image[i][j])):
-    # if not all_elements_equal(image[i][j]):
-    # print(image[i][j])
 
 
 if __name__ == '__main__':
@@ -195,4 +190,18 @@ def restore_channels(image, n_channel):
             pixels = image[i, j] * n_channel #np.repeat(pixel, n_channel)
             new_image[i, j] = pixels #[pixel for n in range(n_channel)]
     return new_image
+    
+def testing_images_structure(image):
+    w = image.shape[0]
+    h = image.shape[1]
+    print(image[4, 4])
+    # when iterating, remember that images may not be square
+    T = 128
+    # for i in range(w):  # rows
+    # for j in range(h):  # columns
+    # image[i, j] = 0 if (image[i, j] <= T).any() else 255
+    # for k in range(len(image[i][j])):
+    # if not all_elements_equal(image[i][j]):
+    # print(image[i][j])
+
 '''
