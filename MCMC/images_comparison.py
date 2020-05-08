@@ -34,14 +34,27 @@ def ssi(imageX, imageY):
 def mse(imageX, imageY):
     """Calculate the 'Mean Squared Error' (MSE) between two images. 0 means a perfect similarity. Images must have the same dimensions."""
     error = np.sum((imageX.astype("float") - imageY.astype("float")) ** 2)
-    squared_difference = (imageX.astype("float") - imageY.astype("float"))** 2
+    squared_difference = (imageX.astype("float") - imageY.astype("float")) ** 2
     sum_of_sq_diff = np.sum(squared_difference)
     overall_pixels = imageX.shape[0] * imageX.shape[1]
     error = sum_of_sq_diff / overall_pixels  # divide the sum of squares by the overall number of pixels
     return error
+
+
 # Perform pixel-wise comparison
-def percentage_of_wrong_pixels():
-    pass
+def percentage_of_wrong_pixels(imageX, imageY):
+    width = imageX.shape[0]
+    height = imageX.shape[1]
+    overall_pixels = width * height
+    wrong_pixels = 0
+    # iterate over all pixels and compare them. TODO: optimize for better performance
+    for i in range(width):
+        for j in range(height):
+            if imageX[i, j].any() != imageY[i, j].any():
+                wrong_pixels += 1
+    return wrong_pixels
+
+
 def compare_with_metrics(imageX, imageY, name):
     """Compare the given images using the MSE and SSI metrics."""
     mean_sq_err = mse(imageX, imageY)
