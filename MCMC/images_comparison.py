@@ -1,24 +1,7 @@
 import numpy as np
 from skimage.metrics import structural_similarity
-import argparse
-import imutils
 import cv2
 import matplotlib.pyplot as plt
-
-
-# For reading arguments passed from the command line
-# arg_parser = argparse.ArgumentParser()
-
-# arg_parser.add_argument("-f", "--first", required=True, help="the first input image")
-# arg_parser.add_argument("-s", "--second", required=True, help="the second input image")
-# args = vars(arg_parser.parse_args())
-
-# imageA = cv2.imread(args["first"])
-# imageB = cv2.imread(args["second"])
-
-# TODO: pairwise pixel similarity
-
-# Acccuracy
 
 
 def ssi(imageX, imageY):
@@ -51,7 +34,9 @@ def mse(imageX, imageY):
     return error
 
 
-# Can be treated as accuracy of samplers
+# (1 - percentage of wrong pixels) can be treated as accuracy of samplers
+
+# The idea is to minimize the number of wrong pixels
 def percentage_of_wrong_pixels(imageX, imageY):
     """
     Perform pixel-wise comparison of two images. Can be used for evaluation of image restoration algorithms.

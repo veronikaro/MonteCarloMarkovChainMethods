@@ -1,5 +1,5 @@
 from MCMC import metropolis_sampler
-from MCMC import noising
+from MCMC import noiser
 from MCMC import images_processing
 from MCMC.auxiliary_methods import arithmetic_progression_series
 

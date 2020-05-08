@@ -1,6 +1,8 @@
 import numpy as np
 
 
+# Helper module
+
 def arithmetic_progression_series(a, d, n):
     curr_term = a
     series = [a]
