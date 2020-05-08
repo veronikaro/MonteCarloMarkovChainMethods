@@ -32,22 +32,46 @@ def clique_energy(image, pixel_position):
     return sum(pixel_intensities)
 
 
-def acceptance_probability(beta, pi, image, random_pixel_position):
+def indicator_func(x, y):
+    if x == y:
+        return 1
+    else:
+        return 0
+
+
+# The potential energy of the system
+def potentials(image, position, flipped_pixel_value=False):
+    if flipped_pixel_value:
+        current_pixel_value = -image[position]
+    else:
+        current_pixel_value = image[position]
+    neighbors = get_all_neighbors(position, image.shape)
+    energy = 0
+    for n in neighbors:
+        energy = energy + indicator_func(image[n], current_pixel_value)
+    return energy
+
+
+def acceptance_probability(beta, pi, init_image, current_image, random_pixel_position):
     """
     Calculate an acceptance probability of flipping a given pixel.
 
-    :param beta: ?
+    :param beta: the strength of coupling (interaction) between pixels
     :param pi: ?
     :param image: a monochrome image with pixel intensities converted to -1 and +1; our prior belief of an image, X
     :param random_pixel_position: coordinates of a given pixel to be flipped or not
     :return: a floating point number - posterior probability
     """
-    gamma = 0.5 * log((1 - pi) / pi)  # external_factor
-    neighbors_energy = clique_energy(image, random_pixel_position)
+    gamma = 0.5 * log((1 - pi) / pi)  # external factor. also called J - a coupling strength
+    neighbors_energy = clique_energy(current_image, random_pixel_position)
     i, j = random_pixel_position
-    current_pixel_value = image[i][j]
+    init_pixel_value = init_image[i][j]
+    current_pixel_value = current_image[i][j]
+
     # TODO: double-check posterior calculation
-    posterior = -2 * gamma * current_pixel_value * current_pixel_value - 2 * beta * current_pixel_value * neighbors_energy  # posterior function
+    # 2 is some external strength
+    # gamma = 2
+    posterior = -2 * gamma * init_pixel_value * current_pixel_value - 2 * beta * current_pixel_value * neighbors_energy  # posterior function
     return posterior
 
 
@@ -88,6 +112,7 @@ def choose_random_neighbor(neighbors):
     return random_neighbor
 
 
+# Get Markov blanket for a given pixel
 # If diagonal_neighbors = True, the clique contains 8 sites
 def get_all_neighbors(position, image_dimensions,
                       diagonal_neighbors=True):  # let's try passing tuple with pixel's position instead of one number
@@ -133,21 +158,52 @@ def run_metropolis_sampler(image):
     # print("Before:")
     # print(image.shape)
     image = reduce_channels_for_sampler(image)  # convert a 3-channel image to 1-channel one
-    image = convert_image_to_ising_model(image)
-    time = range(0, 2000000)
+    image = convert_image_to_ising_model(image)  # initial image
+    temperature = range(0, 2000000)
+    init_image = image
+    current_image = init_image
     width, height = image.shape[0], image.shape[1]  # dimensions
-    for t in time:
+    for t in temperature:
         i, j = random.randint(0, width - 1), random.randint(0, height - 1)
         flipped_value = - image[i, j]
         pixel_position = (i, j)
-        alpha = acceptance_probability(beta, pi, image, pixel_position)
+        alpha = acceptance_probability(beta, pi, init_image, current_image, pixel_position)
         random_number = random.random()
-        if np.log(random_number) < alpha:
-            image[i][j] = flipped_value
-    sampled_image = convert_from_ising_to_image(image)
+        if np.log(random_number) < alpha.any():
+            current_image[i][j] = flipped_value
+    sampled_image = convert_from_ising_to_image(current_image)
     sampled_image = restore_channels(sampled_image, 3)
     print(sampled_image.shape)
-    cv2.imwrite('DenoisedIm_Iter={}.png'.format(len(time)), sampled_image)
+    cv2.imwrite('MetropolisDenoisedIm_Iter={}.png'.format(len(temperature)), sampled_image)
+
+
+# test version 2
+def run_metropolis_sampler2(image):
+    """Run the Metropolis sampler for the given noised image."""
+    # arbitrary beta and pi TODO: How beta, pi and gamma can be interpreted?
+    beta = 0.8  # strength of coupling between pixels
+
+    image = reduce_channels_for_sampler(image)  # convert a 3-channel image to 1-channel one
+    image = convert_image_to_ising_model(image)  # initial image
+    init_image = image
+    current_image = init_image
+    width, height = image.shape[0], image.shape[1]  # dimensions
+    iterations = 100
+    pixels = range(0, width * height)
+    for t in iterations:
+
+        i, j = random.randint(0, width - 1), random.randint(0, height - 1)
+        flipped_value = - image[i, j]
+        pixel_position = (i, j)
+
+        alpha = acceptance_probability(beta, pi, init_image, current_image, pixel_position)
+        random_number = random.random()
+        if np.log(random_number) < alpha.any():
+            current_image[i][j] = flipped_value
+    sampled_image = convert_from_ising_to_image(current_image)
+    sampled_image = restore_channels(sampled_image, 3)
+    print(sampled_image.shape)
+    cv2.imwrite('MetropolisDenoisedIm_Iter={}.png'.format(len(temperature)), sampled_image)
 
 
 def all_elements_unique(items_list):
@@ -170,7 +226,7 @@ if __name__ == '__main__':
     image = cv2.imread('Images/cat_bw_noisy.png')
     run_metropolis_sampler(image)
     # print(image.shape)
-    # t = timeit.Timer('run_metropolis_sampler(image)', globals=locals())
+    # t = timeit.Timer('run_metropolis_s ampler(image)', globals=locals())
     # print(t.timeit(number=3))
     # t = timeit.Timer(run_metropolis_sampler(image))
     # timeit.timeit('run_metropolis_sampler(image), 'from __main__ import run_metropolis_sampler, image', number=3)

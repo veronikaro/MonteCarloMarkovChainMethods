@@ -29,8 +29,8 @@ def convert_to_monochrome(image_path):
     # to-do: substitute 255 to 1
 
 # Convert a colored image to black & white and greyscale images using OpenCV library. Show them in new windows
-def convert_to_bw_and_greyscale(image_path):
-    original_image = cv2.imread(image_path)
+def convert_to_bw_and_greyscale(original_image, filename, format):
+    #original_image = cv2.imread(image_path)
     gray_image = cv2.cvtColor(original_image, cv2.COLOR_BGR2GRAY)
     (thresh, black_and_white_image) = cv2.threshold(gray_image, 127, 255, cv2.THRESH_BINARY)
     im_titles = ('Black white image', 'Original image', 'Gray image')
@@ -38,14 +38,15 @@ def convert_to_bw_and_greyscale(image_path):
     for title, image in zip(im_titles, images):
         open_image_in_window(title, image)
     # saving
-    filename = image_path[7:-4] # slice only image title (without 'Images' directory and the format)
-    save_image(filename + '_bw', black_and_white_image)
+    #filename = image_path[7:-4] # slice only image title (without 'Images' directory and the format)
+    save_image(filename + '_bw', format, black_and_white_image)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
+
 # Save image using OpenCV library
-def save_image(filename, image):
-    cv2.imwrite('Images/' + filename + '.png', image)
+def save_image(filename, format, image):
+    cv2.imwrite(filename + '.' + format, image)
 
 def open_image_in_window(title, image):
     cv2.imshow(title, image)

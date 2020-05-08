@@ -16,6 +16,10 @@ import matplotlib.pyplot as plt
 # imageA = cv2.imread(args["first"])
 # imageB = cv2.imread(args["second"])
 
+# TODO: pairwise pixel similarity
+
+# Acccuracy
+
 
 def ssi(imageX, imageY):
     """Calculate the Structural Similarity Index (SSIM) between the two images and show the difference image.
@@ -26,13 +30,18 @@ def ssi(imageX, imageY):
     return (score, diff)
 
 
+# MSE is the sum of the squared differences between two pictures
 def mse(imageX, imageY):
     """Calculate the 'Mean Squared Error' (MSE) between two images. 0 means a perfect similarity. Images must have the same dimensions."""
     error = np.sum((imageX.astype("float") - imageY.astype("float")) ** 2)
-    error /= float(imageX.shape[0] * imageX.shape[1])  # divide the sum of squares by the overall number of pixels
+    squared_difference = (imageX.astype("float") - imageY.astype("float"))** 2
+    sum_of_sq_diff = np.sum(squared_difference)
+    overall_pixels = imageX.shape[0] * imageX.shape[1]
+    error = sum_of_sq_diff / overall_pixels  # divide the sum of squares by the overall number of pixels
     return error
-
-
+# Perform pixel-wise comparison
+def percentage_of_wrong_pixels():
+    pass
 def compare_with_metrics(imageX, imageY, name):
     """Compare the given images using the MSE and SSI metrics."""
     mean_sq_err = mse(imageX, imageY)
@@ -48,6 +57,7 @@ def compare_with_metrics(imageX, imageY, name):
     plt.imshow(imageY, cmap=plt.cm.gray)
     plt.axis(False)
     plt.show()
+
 
 if __name__ == '__main__':
     # Read directly from the file system

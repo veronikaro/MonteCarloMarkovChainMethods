@@ -11,26 +11,49 @@ import cv2
 # TODO: check if energy is calculated the same way as in Metropolis case
 
 
+def probability(beta, external_strength, image, random_pixel_position):
+    """
+    Calculate an acceptance probability of flipping a given pixel.
 
-def acceptance_probability(beta, pi, image, random_pixel_position):
-    """Calculate an acceptance probability of flipping a given pixel.
-
-        Keyword arguments:
-        beta -- ?
-        pi -- ?
-        image -- a monochrome image with pixel intensities converted to -1 and +1; our prior belief of an image, X
-        random_pixel_position -- pixel to be flipped or not
-        """
-    gamma = 0.5 * log((1 - pi) / pi)  # external_factor [
+    :param beta: the strength of coupling (interaction) between pixels
+    :param external_strength: ?
+    :param image: a monochrome image with pixel intensities converted to -1 and +1; our prior belief of an image, X
+    :param random_pixel_position: coordinates of a given pixel to be flipped or not
+    :return: a floating point number - posterior probability
+    """
     neighbors_energy = clique_energy(image, random_pixel_position)
     i, j = random_pixel_position
     current_pixel_value = image[i][j]
-    # There's something wrong here TODO: change posterior calculation
-    posterior = -2 * gamma * current_pixel_value * current_pixel_value - 2 * beta * current_pixel_value * neighbors_energy  # posterior function
-    return posterior
+    E = 2 * beta * neighbors_energy
+    E = E + 2 * external_strength * current_pixel_value
+    prob = 1. / (1 + np.exp(-E))
+    return prob
 
+
+def run_gibbs_sampler(image):
+    """Run the Gibbs sampler for the given noised image."""
+    beta = 0.8
+    external_strength = 2
+    image = reduce_channels_for_sampler(image)  # convert a 3-channel image to 1-channel one
+    image = convert_image_to_ising_model(image)  # initial image
+    # initial image
+    sampled_image = image
+    temperature = range(0, 100)
+    width, height = image.shape[0], image.shape[1]  # dimensions
+    for t in temperature:
+        for i in range(width): # rows
+            for j in range(height): # columns
+                  prob = probability(beta, external_strength, image, (i, j))
+                  flipped_value = - image[i, j]
+                  random_number = random.random()
+                  if np.log(random_number) < prob.any():
+                      sampled_image[i][j] = flipped_value
+    sampled_image = convert_from_ising_to_image(sampled_image)
+    sampled_image = restore_channels(sampled_image, 3)
+    print(sampled_image.shape)
+    cv2.imwrite('TryDenoisedIm_Iter={}!.png'.format(len(temperature)), sampled_image)
 
 
 if __name__ == '__main__':
-
-    print("hello, I'm main")
+    im = cv2.imread('Images/cat_bw_noisy.png')
+    run_gibbs_sampler(im)
