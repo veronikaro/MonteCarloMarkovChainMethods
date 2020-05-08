@@ -22,18 +22,28 @@ import matplotlib.pyplot as plt
 
 
 def ssi(imageX, imageY):
-    """Calculate the Structural Similarity Index (SSIM) between the two images and show the difference image.
-     The index takes values between -1 and 1, where 1 is a perfect similarity.
     """
+        Calculate the Structural Similarity Index (SSIM) between the two images and show the difference image.
+        The index takes values between -1 and 1, where 1 is a perfect similarity.
+
+        :param imageX: the first image to compare
+        :param imageY: the first second to compare
+        :return: SSI coefficient
+        """
     (score, diff) = structural_similarity(imageX, imageY, full=True, multichannel=True)
     diff = (diff * 255).astype("uint8")
     return (score, diff)
 
 
-# MSE is the sum of the squared differences between two pictures
 def mse(imageX, imageY):
-    """Calculate the 'Mean Squared Error' (MSE) between two images. 0 means a perfect similarity. Images must have the same dimensions."""
-    error = np.sum((imageX.astype("float") - imageY.astype("float")) ** 2)
+    """
+        Calculate the 'Mean Squared Error' (MSE) between two images (the sum of the squared differences between two pictures).
+        0 means a perfect similarity. Images must have the same dimensions.
+
+        :param imageX: the first image to compare
+        :param imageY: the first second to compare
+        :return: MSE coefficient (the larger, the more different images are)
+        """
     squared_difference = (imageX.astype("float") - imageY.astype("float")) ** 2
     sum_of_sq_diff = np.sum(squared_difference)
     overall_pixels = imageX.shape[0] * imageX.shape[1]
@@ -41,8 +51,15 @@ def mse(imageX, imageY):
     return error
 
 
-# Perform pixel-wise comparison
+# Can be treated as accuracy of samplers
 def percentage_of_wrong_pixels(imageX, imageY):
+    """
+    Perform pixel-wise comparison of two images. Can be used for evaluation of image restoration algorithms.
+
+    :param imageX: the first image to compare
+    :param imageY: the first second to compare
+    :return: a percentage of wrong pixels
+    """
     width = imageX.shape[0]
     height = imageX.shape[1]
     overall_pixels = width * height
@@ -52,7 +69,7 @@ def percentage_of_wrong_pixels(imageX, imageY):
         for j in range(height):
             if imageX[i, j].any() != imageY[i, j].any():
                 wrong_pixels += 1
-    return wrong_pixels
+    return wrong_pixels / overall_pixels
 
 
 def compare_with_metrics(imageX, imageY, name):
