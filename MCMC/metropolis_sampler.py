@@ -62,6 +62,8 @@ def acceptance_probability(beta, pi, init_image, current_image, random_pixel_pos
     :param random_pixel_position: coordinates of a given pixel to be flipped or not
     :return: a floating point number - posterior probability
     """
+    # TODO: J must be a coupling strength between pixels. Its sign tells if spins prefer to align or to anti-align
+    # TODO: another parameter h - external field
     gamma = 0.5 * log((1 - pi) / pi)  # external factor. also called J - a coupling strength
     neighbors_energy = clique_energy(current_image, random_pixel_position)
     i, j = random_pixel_position
@@ -78,7 +80,7 @@ def acceptance_probability(beta, pi, init_image, current_image, random_pixel_pos
 # TODO: think how to improve for better performance when iterating over pixels.
 def reduce_channels_for_sampler(image):
     """Reduce a 3-channel image to 1-channel image."""
-    w = image.shape[0]
+    w = image.shape[0] # switch width to height
     h = image.shape[1]
     new_image = np.ndarray(shape=(w, h))  # create a new array for pixel values
     for i in range(w):  # rows
@@ -149,21 +151,22 @@ def get_all_neighbors(position, image_dimensions,
     return neighbors
 
 
+# Works with images converted to the binary format (with 0 and 255 as pixel values)
 def run_metropolis_sampler(image):
     """Run the Metropolis sampler for the given noised image."""
     # arbitrary beta and pi TODO: How beta, pi and gamma can be interpreted?
     beta = 0.8
     # gamma = 1.0
-    pi = 0.15
+    pi = 0.05
     # print("Before:")
     # print(image.shape)
-    image = reduce_channels_for_sampler(image)  # convert a 3-channel image to 1-channel one
+    #image = reduce_channels_for_sampler(image)  # convert a 3-channel image to 1-channel one
     image = convert_image_to_ising_model(image)  # initial image
-    temperature = range(0, 2000000)
+    iterations = range(0, 2000000)
     init_image = image
     current_image = init_image
     width, height = image.shape[0], image.shape[1]  # dimensions
-    for t in temperature:
+    for t in iterations:
         i, j = random.randint(0, width - 1), random.randint(0, height - 1)
         flipped_value = - image[i, j]
         pixel_position = (i, j)
@@ -172,9 +175,9 @@ def run_metropolis_sampler(image):
         if np.log(random_number) < alpha.any():
             current_image[i][j] = flipped_value
     sampled_image = convert_from_ising_to_image(current_image)
-    sampled_image = restore_channels(sampled_image, 3)
+    #sampled_image = restore_channels(sampled_image, 3)
     print(sampled_image.shape)
-    cv2.imwrite('MetropolisDenoisedIm_Iter={}.png'.format(len(temperature)), sampled_image)
+    cv2.imwrite('testing_metropolis_no_channel_reduction_iter={}.png'.format(len(iterations)), sampled_image)
 
 
 # test version 2
@@ -203,7 +206,7 @@ def run_metropolis_sampler2(image):
     sampled_image = convert_from_ising_to_image(current_image)
     sampled_image = restore_channels(sampled_image, 3)
     print(sampled_image.shape)
-    cv2.imwrite('MetropolisDenoisedIm_Iter={}.png'.format(len(temperature)), sampled_image)
+    cv2.imwrite('MetropolisDenoisedIm_Iter={}.png'.format(len(iterations)), sampled_image)
 
 
 def all_elements_unique(items_list):

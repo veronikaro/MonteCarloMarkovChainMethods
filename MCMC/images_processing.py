@@ -28,9 +28,10 @@ def convert_to_monochrome(image_path):
     # pixels = im.getdata()  # 0 is black, 255 is white
     # to-do: substitute 255 to 1
 
-# Convert a colored image to black & white and greyscale images using OpenCV library. Show them in new windows
+
+# Convert a colored image to black & white and greyscale images using OpenCV library. Show them in new windows and save to the working directory
 def convert_to_bw_and_greyscale(original_image, filename, format):
-    #original_image = cv2.imread(image_path)
+    # original_image = cv2.imread(image_path)
     gray_image = cv2.cvtColor(original_image, cv2.COLOR_BGR2GRAY)
     (thresh, black_and_white_image) = cv2.threshold(gray_image, 127, 255, cv2.THRESH_BINARY)
     im_titles = ('Black white image', 'Original image', 'Gray image')
@@ -38,15 +39,28 @@ def convert_to_bw_and_greyscale(original_image, filename, format):
     for title, image in zip(im_titles, images):
         open_image_in_window(title, image)
     # saving
-    #filename = image_path[7:-4] # slice only image title (without 'Images' directory and the format)
+    # filename = image_path[7:-4] # slice only image title (without 'Images' directory and the format)
     save_image(filename + '_bw', format, black_and_white_image)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
 
+def convert_to_bw_and_return(original_image):
+    gray_image = cv2.cvtColor(original_image, cv2.COLOR_BGR2GRAY)
+    (thresh, black_and_white_image) = cv2.threshold(gray_image, 127, 255, cv2.THRESH_BINARY)
+    im_titles = ('Black white image', 'Original image', 'Gray image')
+    images = (black_and_white_image, original_image, gray_image)
+    for title, image in zip(im_titles, images):
+        open_image_in_window(title, image)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+    return black_and_white_image
+
+
 # Save image using OpenCV library
 def save_image(filename, format, image):
     cv2.imwrite(filename + '.' + format, image)
+
 
 def open_image_in_window(title, image):
     cv2.imshow(title, image)
@@ -59,9 +73,11 @@ def resize(image, scale_percent):
     resized_im = cv2.resize(image, new_dim, interpolation=cv2.INTER_AREA)
     return resized_im
 
+
 if __name__ == '__main__':
     convert_to_bw_and_greyscale('Images/cat.jpg')
-    #convert_to_bw_and_greyscale('Images/cat.jpg')
+    # convert_to_bw_and_greyscale('Images/cat.jpg')
+
 
 def convert_to_monochrome():
     '''

@@ -4,6 +4,7 @@ import cv2
 import matplotlib.pyplot as plt
 
 
+## All these metrics must be symmetric (satisfy metrics axioms)
 def ssi(imageX, imageY):
     """
         Calculate the Structural Similarity Index (SSIM) between the two images and show the difference image.

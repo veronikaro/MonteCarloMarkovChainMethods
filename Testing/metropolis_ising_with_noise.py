@@ -7,15 +7,18 @@ import cv2
 import numpy as np
 import random
 
-# Constants. Apriori knowledge about noise level
+# Works nice
 
-NOISE_LEVEL = 0.1
+# Constants:
 
+NOISE_LEVEL = 0.1 # apriori knowledge about noise level (or expected noise)
 
 def noise(p):
     return 0.5 * np.log((1 - p) / p)
 
-
+# TODO: test the model with Gaussian noise
+def gaussian_noise(sigma):
+    pass
 
 def run_metropolis_with_noise(image):
     image = metropolis_sampler.reduce_channels_for_sampler(image)
@@ -44,7 +47,7 @@ def run_metropolis_with_noise(image):
                         image[site] = flipped_value
         sampled_image = metropolis_sampler.convert_from_ising_to_image(image)
         sampled_image = metropolis_sampler.restore_channels(sampled_image, 3)  # restored image
-        images_processing.save_image('Denoised/noise=0.1/metropolis_noise_ising_chest_b={0}_noise={1}'.format(beta, NOISE_LEVEL), 'jpeg', sampled_image)
+        images_processing.save_image('Denoised/noise=0.1/test_without_channel_reduction/metropolis_noise_ising_chest_b={0}_noise={1}'.format(beta, NOISE_LEVEL), 'jpeg', sampled_image)
 
 
 if __name__ == '__main__':
@@ -55,7 +58,7 @@ if __name__ == '__main__':
     # images_processing.convert_to_bw_and_greyscale(image, 'chest', 'jpeg')
 
 
-## Note: potentials() function works as expected
+## Note: the potentials() function works as expected
 def testing_potentials_calculation(image):
     image = metropolis_sampler.reduce_channels_for_sampler(image)
     image = metropolis_sampler.convert_image_to_ising_model(image)

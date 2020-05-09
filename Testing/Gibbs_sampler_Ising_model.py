@@ -27,11 +27,11 @@ def energy_gibbs(image, position, color='black'):
 def run_gibbs_without_noise(image):
     image = metropolis_sampler.reduce_channels_for_sampler(image)
     image = metropolis_sampler.convert_image_to_ising_model(image)
-    iterations = 2
+    iterations = 100
     # beta = 1.3
     initial_beta = 0.3
     beta_difference = 0.1
-    #beta_range = arithmetic_progression_series(initial_beta, beta_difference, 10)
+    beta_range = arithmetic_progression_series(initial_beta, beta_difference, 10)
     beta_range = [1.3]
     # noise_prob = 0.05  # this parameter is taken from the knowledge of noise level in the image
     rows = range(image.shape[0])
@@ -43,13 +43,13 @@ def run_gibbs_without_noise(image):
                     site = (i, j)
                     number_of_black_neighbors = energy_gibbs(image, site, 'black')
                     number_of_white_neighbors = energy_gibbs(image, site, 'white')
-                    Z_normalizing_constant = number_of_black_neighbors + number_of_white_neighbors
-                    posterior = beta*number_of_black_neighbors - Z_normalizing_constant
+                    Z_normalizing_constant = np.exp(number_of_black_neighbors) + np.exp(number_of_white_neighbors)
+                    posterior = np.exp(beta*number_of_black_neighbors)/Z_normalizing_constant
                     u = random.random()
-                    if np.log(u) < posterior:
-                        image[site] = -1
-                    else:
+                    if u < posterior:
                         image[site] = 1
+                    else:
+                        image[site] = -1
         sampled_image = metropolis_sampler.convert_from_ising_to_image(image)
         sampled_image = metropolis_sampler.restore_channels(sampled_image, 3)  # restored image
         images_processing.save_image(
