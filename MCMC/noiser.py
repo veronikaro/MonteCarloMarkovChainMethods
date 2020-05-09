@@ -47,15 +47,15 @@ if __name__ == '__main__':
     test_sp_noise('Images/cat_bw.png')
 
 
-def add_gaussian_noise(image_in, noise_sigma):
-    temp_image = np.float64(np.copy(image_in))
+# Degrade an image by the additive Gaussian noise
+def add_gaussian_noise(image, sigma):
+    temp_image = np.float64(np.copy(image))
 
     h = temp_image.shape[0]
     w = temp_image.shape[1]
-    noise = np.random.randn(h, w) * noise_sigma
-
+    noise = np.random.randn(h, w) * sigma
     noisy_image = np.zeros(temp_image.shape, np.float64)
-    if len(temp_image.shape) == 2:
+    if len(temp_image.shape) == 2:  # if an image has a single channel
         noisy_image = temp_image + noise
     else:
         noisy_image[:, :, 0] = temp_image[:, :, 0] + noise

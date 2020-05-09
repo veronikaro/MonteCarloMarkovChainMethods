@@ -3,7 +3,7 @@ from matplotlib import image
 from matplotlib import pyplot
 import cv2
 import numpy as np
-
+import os
 
 def dimensions(image):
     return image.shape
@@ -58,8 +58,9 @@ def convert_to_bw_and_return(original_image):
 
 
 # Save image using OpenCV library
-def save_image(filename, format, image):
-    cv2.imwrite(filename + '.' + format, image)
+def save_image(filename, format, image, directory=''):
+    os.mkdir(directory)
+    cv2.imwrite(os.path.join(directory, filename + '.' + format), image)
 
 
 def open_image_in_window(title, image):

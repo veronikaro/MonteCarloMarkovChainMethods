@@ -6,30 +6,34 @@ from MCMC.auxiliary_methods import arithmetic_progression_series
 import cv2
 import numpy as np
 import random
+import datetime
 
 # Works nice
 
-# Constants:
+# Constants
+NOISE_LEVEL = 0.1  # a prior knowledge about noise level (or expected noise)
+ITERATIONS_NUMBER = 5  # it takes approximately 04:13 minutes to iterate 5 times over an image of size 1457724 ~ 1.5mln pixels
+SIGMA = 1
 
-NOISE_LEVEL = 0.1 # apriori knowledge about noise level (or expected noise)
 
 def noise(p):
     return 0.5 * np.log((1 - p) / p)
 
+
+# additive Gaussian noise
 # TODO: test the model with Gaussian noise
-def gaussian_noise(sigma):
-    pass
+def gaussian_noise(sigma, yi, xi):  # h(x, y) function
+    return - 0.5/(sigma**2) * (yi - xi)**2
+
 
 def run_metropolis_with_noise(image):
     image = metropolis_sampler.reduce_channels_for_sampler(image)
     image = metropolis_sampler.convert_image_to_ising_model(image)
-    iterations = 2
-    #beta = 1.3
+    iterations = ITERATIONS_NUMBER
     initial_beta = 0.3
     beta_difference = 0.1
-    #beta_range = arithmetic_progression_series(initial_beta, beta_difference, 10)
+    # beta_range = arithmetic_progression_series(initial_beta, beta_difference, 10)
     beta_range = [1.3]
-    #noise_prob = 0.05  # this parameter is taken from the knowledge of noise level in the image
     rows = range(image.shape[0])
     columns = range(image.shape[1])
     for beta in beta_range:
@@ -38,21 +42,30 @@ def run_metropolis_with_noise(image):
                 for j in columns:
                     site = (i, j)
                     flipped_value = - image[site]
-                    d = beta * metropolis_sampler.potentials(image, site) + noise(NOISE_LEVEL)
-                    d_stroke = beta * metropolis_sampler.potentials(image, site, flipped_pixel_value=True) + noise(
-                        NOISE_LEVEL)
+                    d = beta * metropolis_sampler.potentials(image, site) + gaussian_noise(SIGMA)
+                    d_stroke = beta * metropolis_sampler.potentials(image, site,
+                                                                    flipped_pixel_value=True) + gaussian_noise(SIGMA)
+                    # d = beta * metropolis_sampler.potentials(image, site) + noise(NOISE_LEVEL)
+                    # d_stroke = beta * metropolis_sampler.potentials(image, site, flipped_pixel_value=True) + noise(
+                    # NOISE_LEVEL)
                     posterior = np.exp(min(d_stroke - d, 0))
                     u = random.random()
                     if u < posterior:
                         image[site] = flipped_value
         sampled_image = metropolis_sampler.convert_from_ising_to_image(image)
         sampled_image = metropolis_sampler.restore_channels(sampled_image, 3)  # restored image
-        images_processing.save_image('Denoised/noise=0.1/test_without_channel_reduction/metropolis_noise_ising_chest_b={0}_noise={1}'.format(beta, NOISE_LEVEL), 'jpeg', sampled_image)
+        images_processing.save_image('metropolis_noise_ising_beta={0}_iter={1}'.format(beta, iterations), 'jpeg',
+                                     sampled_image,
+                                     'Denoised/metropolis_sampler_noise_ising_model/noise={0}'.format(NOISE_LEVEL))
 
 
 if __name__ == '__main__':
+    # start = datetime.datetime.now()
     image = cv2.imread('noised_chest10%.jpeg')
-    run_metropolis_with_noise(image)
+    print(image.shape[0] * image.shape[1])
+    # run_metropolis_with_noise(image)
+    # print('time since start of the sampling process:')
+    # print(datetime.datetime.now() - start)
     # image = noising.sp_noise(image, 0.05)
     # noising.save_image('noised_chest', 'jpeg', image)
     # images_processing.convert_to_bw_and_greyscale(image, 'chest', 'jpeg')
