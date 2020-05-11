@@ -3,6 +3,8 @@ from skimage.metrics import structural_similarity
 import cv2
 import matplotlib.pyplot as plt
 
+from math import log10, sqrt
+
 
 ## All these metrics must be symmetric (satisfy metrics axioms)
 def ssi(imageX, imageY):
@@ -46,13 +48,13 @@ def percentage_of_wrong_pixels(imageX, imageY):
     :param imageY: the first second to compare
     :return: a percentage of wrong pixels
     """
-    width = imageX.shape[0]
-    height = imageX.shape[1]
+    height = imageX.shape[0]
+    width = imageX.shape[1]
     overall_pixels = width * height
     wrong_pixels = 0
     # iterate over all pixels and compare them. TODO: optimize for better performance
-    for i in range(width):
-        for j in range(height):
+    for i in range(height):
+        for j in range(width):
             if imageX[i, j].any() != imageY[i, j].any():
                 wrong_pixels += 1
     return wrong_pixels / overall_pixels
@@ -75,11 +77,18 @@ def compare_with_metrics(imageX, imageY, name):
     plt.show()
 
 
+# The higher the PSNR, the better the quality of the reconstructed image.
+def PSNR(imageX, imageY):
+    max_pixel = 255.0
+    psnr = 20 * log10(max_pixel / sqrt(mse(imageX, imageY)))
+    return psnr
+
+
 if __name__ == '__main__':
     # Read directly from the file system
     imageX = cv2.imread('Images/cat_bw.png')
     imageY = cv2.imread('AfterSampling2000000.png')
-    compare_with_metrics(imageX, imageY, 'Original vs Denoised')
+    compare_with_metrics(imageX, imageY, 'Original vs Denoised images')
     # score, diff = ssi(imageX, imageY)
     # print("SSIM: {}".format(score))
     # cv2.imshow("Difference", diff)

@@ -8,9 +8,6 @@ from MCMC.metropolis_sampler import clique_energy, restore_channels, reduce_chan
 import cv2
 
 
-# TODO: check if energy is calculated the same way as in Metropolis case
-
-
 def probability(beta, external_strength, image, random_pixel_position):
     """
     Calculate an acceptance probability of flipping a given pixel.
@@ -41,17 +38,17 @@ def run_gibbs_sampler(image):
     temperature = range(0, 100)
     width, height = image.shape[0], image.shape[1]  # dimensions
     for t in temperature:
-        for i in range(width): # rows
-            for j in range(height): # columns
-                  prob = probability(beta, external_strength, image, (i, j))
-                  flipped_value = - image[i, j]
-                  random_number = random.random()
-                  if np.log(random_number) < prob.any():
-                      sampled_image[i][j] = flipped_value
+        for i in range(width):  # rows
+            for j in range(height):  # columns
+                prob = probability(beta, external_strength, image, (i, j))
+                flipped_value = - image[i, j]
+                random_number = random.random()
+                if np.log(random_number) < prob.any():
+                    sampled_image[i][j] = flipped_value
     sampled_image = convert_from_ising_to_image(sampled_image)
     sampled_image = restore_channels(sampled_image, 3)
     print(sampled_image.shape)
-    cv2.imwrite('TryDenoisedIm_Iter={}!.png'.format(len(temperature)), sampled_image)
+    cv2.imwrite('gibbs_sampler_im_iter={}.png'.format(len(temperature)), sampled_image)
 
 
 if __name__ == '__main__':

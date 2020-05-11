@@ -59,7 +59,7 @@ def convert_to_bw_and_return(original_image):
 
 # Save image using OpenCV library
 def save_image(filename, format, image, directory=''):
-    os.mkdir(directory)
+    #os.mkdir(directory)
     cv2.imwrite(os.path.join(directory, filename + '.' + format), image)
 
 
@@ -76,26 +76,9 @@ def resize(image, scale_percent):
 
 
 if __name__ == '__main__':
-    convert_to_bw_and_greyscale('Images/cat.jpg')
-    # convert_to_bw_and_greyscale('Images/cat.jpg')
+    original_image = cv2.imread('../Images & results/Original images/brain7.jpg')
+    #print(original_image.shape)
+    bw_im = convert_to_bw_and_return(original_image)
+    save_image('brain7_bw', 'jpg', bw_im, '../Images & results/Original binary images')
 
 
-def convert_to_monochrome():
-    '''
-    im = Image.open('cat.jpg').convert('RGB')
-    im = im.convert('1')  # convert image to black and white
-    im.save('bw_cat.png')
-    '''
-    im = Image.open('bw_cat.png')
-    pixels = im.getdata()  # 0 is black, 255 is white
-    # to-do: substitute 255 to 1
-
-    # write pixels into a matrix that will be comfortable to work with
-    for i, pix in zip(range(len(pixels)), pixels):
-        # print(i, pix)
-        if pix == 255:
-            pixels[i] = 1  # exception!
-    for i, pix in zip(range(len(pixels)), pixels):
-        print(i, pix)
-        if i == 20:
-            break
