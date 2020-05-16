@@ -3,12 +3,10 @@ import timeit
 import random
 import cython
 from math import exp, log
-from MCMC.images_processing import *
 import cv2
 
 
-# TODO: describe all parameters used in the algorithm
-
+# TODO: move to the images_processing module
 def convert_image_to_ising_model(image):
     """Convert the image to the Ising model representation (with a spin space = {-1, 1})."""
     image[np.where(image == [0])] = [-1]
@@ -16,6 +14,7 @@ def convert_image_to_ising_model(image):
     return image
 
 
+# TODO: move to the images_processing module
 def convert_from_ising_to_image(image):
     """Convert the Ising representation of an image to the standard image format with pixels' intensities."""
     image[np.where(image == [-1])] = [0]
@@ -23,6 +22,7 @@ def convert_from_ising_to_image(image):
     return image
 
 
+# Not used
 def clique_energy(image, pixel_position):
     """Calculate the local energy of pixels in the neighborhood of a given pixel."""
     neighbors = get_all_neighbors(pixel_position, image.shape)
@@ -55,6 +55,7 @@ def potentials(image, position, flipped_pixel_value=False, neighbors_number=8):
     return energy
 
 
+# Initial trying, not used
 def acceptance_probability(beta, pi, init_image, current_image, random_pixel_position):
     """
     Calculate an acceptance probability of flipping a given pixel.
@@ -77,6 +78,7 @@ def acceptance_probability(beta, pi, init_image, current_image, random_pixel_pos
 
 
 # TODO: think how to improve for better performance when iterating over pixels.
+# TODO: move to the images_processing module
 def reduce_channels_for_sampler(image):
     """Reduce a 3-channel image to 1-channel image."""
     w = image.shape[0]  # switch width to height
@@ -88,6 +90,7 @@ def reduce_channels_for_sampler(image):
     return new_image
 
 
+# TODO: move to the images_processing module
 def restore_channels(image, n_channels):
     """
     Convert 1-channel image to n-channel image.
@@ -150,6 +153,7 @@ def get_all_neighbors(position, image_dimensions,
     return neighbors
 
 
+# TODO: re-think logic of this version of the algorithm. Not used now
 # Works with images converted to the binary format (with 0 and 255 as pixel values)
 def run_metropolis_sampler(image):
     """Run the Metropolis sampler for the given noised image."""
