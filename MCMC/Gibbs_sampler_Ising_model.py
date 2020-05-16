@@ -27,33 +27,32 @@ def run_gibbs_without_noise(image):
     image = metropolis_sampler.reduce_channels_for_sampler(image)
     image = metropolis_sampler.convert_image_to_ising_model(image)
     iterations = 100
-    # beta = 1.3
     initial_beta = 0.3
     beta_difference = 0.1
     beta_range = arithmetic_progression_series(initial_beta, beta_difference, 10)
-    beta_range = [1.3]
+    beta = 0.8
     # noise_prob = 0.05  # this parameter is taken from the knowledge of noise level in the image
     rows = range(image.shape[0])
     columns = range(image.shape[1])
-    for beta in beta_range:
-        for t in range(iterations):
-            for i in rows:
-                for j in columns:
-                    site = (i, j)
-                    number_of_black_neighbors = energy_gibbs(image, site, 'black')
-                    number_of_white_neighbors = energy_gibbs(image, site, 'white')
-                    Z_normalizing_constant = np.exp(number_of_black_neighbors) + np.exp(number_of_white_neighbors)
-                    posterior = np.exp(beta*number_of_black_neighbors)/Z_normalizing_constant
-                    u = random.random()
-                    if u < posterior:
-                        image[site] = 1
-                    else:
-                        image[site] = -1
-        sampled_image = metropolis_sampler.convert_from_ising_to_image(image)
-        sampled_image = metropolis_sampler.restore_channels(sampled_image, 3)  # restored image
-        images_processing.save_image(
-            'Denoised images/gibbs_sampler_no_noise/metropolis_noise_ising_chest_b={0}_noise={1}'.format(beta, NOISE_LEVEL),
-            'jpeg', sampled_image)
+    for t in range(iterations):
+        for i in rows:
+            for j in columns:
+                site = (i, j)
+
+                number_of_black_neighbors = energy_gibbs(image, site, 'black')
+                number_of_white_neighbors = energy_gibbs(image, site, 'white')
+                Z_normalizing_constant = np.exp(number_of_black_neighbors) + np.exp(number_of_white_neighbors)
+                posterior = np.exp(beta * number_of_black_neighbors) / Z_normalizing_constant
+                u = random.random()
+                if u < posterior:
+                    image[site] = 1
+                else:
+                    image[site] = -1
+    sampled_image = metropolis_sampler.convert_from_ising_to_image(image)
+    sampled_image = metropolis_sampler.restore_channels(sampled_image, 3)  # restored image
+    images_processing.save_image(
+        'Denoised images/gibbs_sampler_no_noise/metropolis_noise_ising_chest_b={0}_noise={1}'.format(beta, NOISE_LEVEL),
+        'jpeg', sampled_image)
 
 
 if __name__ == '__main__':

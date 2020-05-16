@@ -45,7 +45,7 @@ def potentials(image, position, flipped_pixel_value=False):
         current_pixel_value = -image[position]
     else:
         current_pixel_value = image[position]
-    neighbors = get_all_neighbors(position, image.shape)
+    neighbors = get_all_neighbors(position, image.shape, diagonal_neighbors=False)
     energy = 0
     for n in neighbors:
         energy = energy + indicator_func(image[n], current_pixel_value)
