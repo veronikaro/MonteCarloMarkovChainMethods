@@ -4,7 +4,7 @@ import cv2
 import sys
 import numpy as np
 import random
-import imghdr
+from imghdr import what
 
 
 def noise(p, sampled_pixel_value, original_pixel_value):
@@ -68,12 +68,12 @@ def denoising_pipeline(image_name, beta, iterations, noise_probability, neighbor
     # restore channels
     sampled_image = metropolis_sampler.restore_channels(sampled_image, 3)  # restored image
     # create a separate folder to save the result with parameters specified
-    format = imghdr.what(image_name)
-    print('success')
+    format = what(image_name)
     images_processing.save_image(
         'result_beta={0}_noise_p={1}_iter={2}_neighbors={3}'.format(beta, noise_probability, iterations,
                                                                     neighbors_number), format, sampled_image,
         directory='Results')
+    print('success')
 
 
 if __name__ == '__main__':
