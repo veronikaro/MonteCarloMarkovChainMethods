@@ -4,16 +4,16 @@ This repository holds implementation of Markov chain Monte Carlo methods, namely
 #### Thoughts: 
 Denoising techniques can be especially beneficial for real-time computer vision applications & improving performance of neural networks that deal with classification & detection
 
-## Notes on using samplers
-1. Convert an image to black & white
-2. Add a noise to it
+## Notes on using the samplers
+1. Convert an image to its black & white version
+2. Add a noise to it using noiser.py
 3. Reduce the number of channels from 3 to 1
 4. Convert the image to the Ising model representation
 
 
 ## Considered types of noise 
-* Flip noise with p parameter
-* Additive Gaussian noise with sigma parameter
+* Flip noise with the parameter **p** - a probability of the pixel being written wrong
+* Additive Gaussian noise with the **sigma** parameter
 
 ## Scripts that can be run separately from the command line:
 
