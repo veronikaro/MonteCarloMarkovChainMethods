@@ -1,12 +1,7 @@
-from PIL import Image
-from matplotlib import image
-from matplotlib import pyplot
 import cv2
 import numpy as np
 import random
 
-import MCMC.images_comparison
-import MCMC.images_processing
 
 def sp_noise(image, prob):
     """

@@ -58,12 +58,7 @@ def run_gibbs_without_noise(image):
 if __name__ == '__main__':
     image = cv2.imread('noised_chest5%.jpeg')
     run_gibbs_without_noise(image)
-    # image = noising.sp_noise(image, 0.05)
-    # noising.save_image('noised_chest', 'jpeg', image)
-    # images_processing.convert_to_bw_and_greyscale(image, 'chest', 'jpeg')
 
-
-## Note: potentials() function works as expected
 def testing_potentials_calculation(image):
     image = metropolis_sampler.reduce_channels_for_sampler(image)
     image = metropolis_sampler.convert_image_to_ising_model(image)
