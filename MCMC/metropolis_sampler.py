@@ -39,13 +39,16 @@ def indicator_func(x, y):
         return 0
 
 
-# The potential energy of the system
-def potentials(image, position, flipped_pixel_value=False):
+# Return the potential energy of the system -> energy of the neighborhood
+def potentials(image, position, flipped_pixel_value=False, neighbors_number=8):
     if flipped_pixel_value:
         current_pixel_value = -image[position]
     else:
         current_pixel_value = image[position]
-    neighbors = get_all_neighbors(position, image.shape, diagonal_neighbors=False)
+    if neighbors_number == 8:
+        neighbors = get_all_neighbors(position, image.shape)
+    else:
+        neighbors = get_all_neighbors(position, image.shape, diagonal_neighbors=False)
     energy = 0
     for n in neighbors:
         energy = energy + indicator_func(image[n], current_pixel_value)
@@ -76,7 +79,7 @@ def acceptance_probability(beta, pi, init_image, current_image, random_pixel_pos
 # TODO: think how to improve for better performance when iterating over pixels.
 def reduce_channels_for_sampler(image):
     """Reduce a 3-channel image to 1-channel image."""
-    w = image.shape[0] # switch width to height
+    w = image.shape[0]  # switch width to height
     h = image.shape[1]
     new_image = np.ndarray(shape=(w, h))  # create a new array for pixel values
     for i in range(w):  # rows
@@ -161,7 +164,7 @@ def run_metropolis_sampler(image):
     init_image = image
     current_image = init_image
     width, height = image.shape[0], image.shape[1]  # dimensions
-    iterations = range(width*height)
+    iterations = range(width * height)
     for t in iterations:
         i, j = random.randint(0, width - 1), random.randint(0, height - 1)
         flipped_value = - image[i, j]
@@ -173,7 +176,7 @@ def run_metropolis_sampler(image):
     sampled_image = convert_from_ising_to_image(current_image)
     sampled_image = restore_channels(sampled_image, 3)
     print(sampled_image.shape)
-    cv2.imwrite('testingiter={}.jpg'.format(len(iterations)), sampled_image) # should be a separate function
+    cv2.imwrite('testingiter={}.jpg'.format(len(iterations)), sampled_image)  # should be a separate function
 
 
 def all_elements_unique(items_list):
@@ -195,4 +198,3 @@ def all_elements_equal(items_list):
 if __name__ == '__main__':
     image = cv2.imread('brain4_noise5%.jpg')
     run_metropolis_sampler(image)
-
