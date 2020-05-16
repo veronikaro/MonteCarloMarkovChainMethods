@@ -11,3 +11,9 @@ This repository holds implementation of Markov chain Monte Carlo methods, namely
 ## Considered types of noise 
 * Flip noise with p parameter
 * Additive Gaussian noise with sigma parameter
+
+## Scripts that can be run separately from the command line:
+
+* images_processing.py (for converting the image from a current directory to its b&w version and adding noise to it)
+* metropolis_ising_with_noise.py
+* metropolis_ising_no_noise.py
