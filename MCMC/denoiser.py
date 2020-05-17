@@ -86,3 +86,4 @@ if __name__ == '__main__':
     for b in beta_values:
         denoising_pipeline('Noisy images/noised_20.0%_grumpy_cat.jpeg', beta=b, iterations=pixels_number,
                            noise_probability=.2, neighbors_number=8)
+    # TODO: next step is to evaluate performance for denoising of 20%-noised image and build corresponding graphs
