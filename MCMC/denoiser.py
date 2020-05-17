@@ -29,9 +29,9 @@ def denoising_pipeline(image_name, beta, iterations, noise_probability, neighbor
     # read the image
     original_image = cv2.imread(image_name)
     # reduce channels
-    original_image = metropolis_sampler.reduce_channels_for_sampler(original_image)
+    original_image = images_processing.reduce_channels_for_sampler(original_image)
     # convert to Ising
-    original_image = metropolis_sampler.convert_image_to_ising_model(original_image)
+    original_image = images_processing.convert_image_to_ising_model(original_image)
     # create a copy of the image to which the changes will be applied
     sampled_image = original_image
     # accept beta as an argument
@@ -64,9 +64,9 @@ def denoising_pipeline(image_name, beta, iterations, noise_probability, neighbor
         if u < posterior:
             sampled_image[current_site] = flipped_value
     # convert back from Ising
-    sampled_image = metropolis_sampler.convert_from_ising_to_image(sampled_image)
+    sampled_image = images_processing.convert_from_ising_to_image(sampled_image)
     # restore channels
-    sampled_image = metropolis_sampler.restore_channels(sampled_image, 3)  # restored image
+    sampled_image = images_processing.restore_channels(sampled_image, 3)  # restored image
     # create a separate folder to save the result with parameters specified
     format = what(image_name)
     images_processing.save_image(
@@ -80,3 +80,6 @@ if __name__ == '__main__':
     arguments = sys.argv
     image_name, beta, iterations, noise_probability, neighbors_number = arguments[1:]
     denoising_pipeline(image_name, float(beta), int(iterations), float(noise_probability), int(neighbors_number))
+    #im = cv2.imread('Noisy images/noised_10.0%_grumpy_cat.jpg')
+    #pixels_number = im.shape[0] * im.shape[1]
+    #denoising_pipeline('Noisy images/noised_10.0%_grumpy_cat.jpg', beta=.8, iterations=pixels_number, noise_probability=.1, neighbors_number=8)

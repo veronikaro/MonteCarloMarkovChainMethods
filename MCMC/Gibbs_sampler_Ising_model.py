@@ -24,8 +24,8 @@ def energy_gibbs(image, position, color='black'):
 
 
 def run_gibbs_without_noise(image):
-    image = metropolis_sampler.reduce_channels_for_sampler(image)
-    image = metropolis_sampler.convert_image_to_ising_model(image)
+    image = images_processing.reduce_channels_for_sampler(image)
+    image = images_processing.convert_image_to_ising_model(image)
     iterations = 100
     initial_beta = 0.3
     beta_difference = 0.1
@@ -48,8 +48,8 @@ def run_gibbs_without_noise(image):
                     image[site] = 1
                 else:
                     image[site] = -1
-    sampled_image = metropolis_sampler.convert_from_ising_to_image(image)
-    sampled_image = metropolis_sampler.restore_channels(sampled_image, 3)  # restored image
+    sampled_image = images_processing.convert_from_ising_to_image(image)
+    sampled_image = images_processing.restore_channels(sampled_image, 3)  # restored image
     images_processing.save_image(
         'Denoised images/gibbs_sampler_no_noise/metropolis_noise_ising_chest_b={0}_noise={1}'.format(beta, NOISE_LEVEL),
         'jpeg', sampled_image)
@@ -60,8 +60,8 @@ if __name__ == '__main__':
     run_gibbs_without_noise(image)
 
 def testing_potentials_calculation(image):
-    image = metropolis_sampler.reduce_channels_for_sampler(image)
-    image = metropolis_sampler.convert_image_to_ising_model(image)
+    image = images_processing.reduce_channels_for_sampler(image)
+    image = images_processing.convert_image_to_ising_model(image)
     energy = metropolis_sampler.potentials(image, (5, 5))
     print("current pixel value")
     print(image[(5, 5)])

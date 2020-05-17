@@ -1,15 +1,54 @@
 from MCMC.services.noiser import sp_noise
-from PIL import Image
 from matplotlib import image
 from matplotlib import pyplot
 import cv2
 from os import path, mkdir
 import sys
 from imghdr import what
+import numpy as np
 
 
 def dimensions(image):
     return image.shape
+
+
+# TODO: think how to improve for better performance when iterating over pixels.
+def reduce_channels_for_sampler(image):
+    """Reduce a 3-channel image to 1-channel image."""
+    w = image.shape[0]  # switch width to height
+    h = image.shape[1]
+    new_image = np.ndarray(shape=(w, h))  # create a new array for pixel values
+    for i in range(w):  # rows
+        for j in range(h):  # columns
+            new_image[i][j] = image[i, j][:1]
+    return new_image
+
+
+# TODO: move to the images_processing module
+def restore_channels(image, n_channels):
+    """
+    Convert 1-channel image to n-channel image.
+
+    :param image: an image in ndarray format
+    :param n_channels: target number of channels
+    :return: ndarray with image's pixels' intensities
+    """
+    width, height, m = image.shape[0], image.shape[1], 1
+    arr = image.reshape(width, height)
+    return np.repeat(arr, m * n_channels).reshape(width, height, n_channels)
+
+
+def convert_image_to_ising_model(image):
+    """Convert the image to the Ising model representation (with a spin space = {-1, 1})."""
+    image[np.where(image == [0])] = [-1]
+    image[np.where(image == [255])] = [1]
+    return image
+
+def convert_from_ising_to_image(image):
+    """Convert the Ising representation of an image to the standard image format with pixels' intensities."""
+    image[np.where(image == [-1])] = [0]
+    image[np.where(image == [1])] = [255]
+    return image
 
 
 # for experimenting
@@ -50,9 +89,10 @@ def convert_to_bw(original_image):
 
 
 # Save image using the OpenCV library
-def save_image(filename, image, directory=''):
+def save_image(filename, format, image, directory=''):
     if not path.exists(directory):
         mkdir(directory)
+    filename = '{0}.{1}'.format(filename, format)
     cv2.imwrite(path.join(directory, filename), image)
 
 
@@ -67,6 +107,7 @@ def resize(image, scale_percent):
     resized_im = cv2.resize(image, new_dim, interpolation=cv2.INTER_AREA)
     return resized_im
 
+
 # Run this script from the command line to get two versions of an image:
 # 1. Black & white
 # 2. Noisy
@@ -77,7 +118,8 @@ def prepare_image_for_sampler_pipeline(original_image_name, noise_probability):
     save_image('bw_{0}'.format(original_image_name), bw_image, 'Binary images')
     noised_bw_image = sp_noise(bw_image, noise_probability)
     # save the noised version of the black & white image
-    save_image('noised_{0}'.format(original_image_name), noised_bw_image, 'Noisy images')
+    noised_pixels_percentage = noise_probability * 100
+    save_image('noised_{0}%_{1}'.format(noised_pixels_percentage, original_image_name), noised_bw_image, 'Noisy images')
 
 
 if __name__ == '__main__':

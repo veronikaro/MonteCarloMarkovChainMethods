@@ -3,8 +3,8 @@ import timeit
 import random
 import cython
 from math import exp, log
-from MCMC.metropolis_sampler import clique_energy, restore_channels, reduce_channels_for_sampler, \
-    convert_image_to_ising_model, convert_from_ising_to_image
+from MCMC.metropolis_sampler import clique_energy
+from MCMC import images_processing
 import cv2
 
 
@@ -31,8 +31,8 @@ def run_gibbs_sampler(image):
     """Run the Gibbs sampler for the given noised image."""
     beta = 0.8
     external_strength = 2
-    image = reduce_channels_for_sampler(image)  # convert a 3-channel image to 1-channel one
-    image = convert_image_to_ising_model(image)  # initial image
+    image = images_processing.reduce_channels_for_sampler(image)  # convert a 3-channel image to 1-channel one
+    image = images_processing.convert_image_to_ising_model(image)  # initial image
     # initial image
     sampled_image = image
     temperature = range(0, 100)
@@ -45,8 +45,8 @@ def run_gibbs_sampler(image):
                 random_number = random.random()
                 if np.log(random_number) < prob.any():
                     sampled_image[i][j] = flipped_value
-    sampled_image = convert_from_ising_to_image(sampled_image)
-    sampled_image = restore_channels(sampled_image, 3)
+    sampled_image = images_processing.convert_from_ising_to_image(sampled_image)
+    sampled_image = images_processing.restore_channels(sampled_image, 3)
     print(sampled_image.shape)
     cv2.imwrite('gibbs_sampler_im_iter={}.png'.format(len(temperature)), sampled_image)
 

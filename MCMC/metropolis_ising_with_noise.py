@@ -29,8 +29,8 @@ def run_metropolis_with_noise(image):
     :param image: an image of size m x n
     :return: saves the result of denoising to the given folder
     """
-    image = metropolis_sampler.reduce_channels_for_sampler(image)
-    image = metropolis_sampler.convert_image_to_ising_model(image)
+    image = images_processing.reduce_channels_for_sampler(image)
+    image = images_processing.convert_image_to_ising_model(image)
     iterations = ITERATIONS_NUMBER
     initial_beta = 0.3
     beta_difference = 0.1
@@ -51,8 +51,8 @@ def run_metropolis_with_noise(image):
                     u = random.random()
                     if u < posterior:
                         image[site] = flipped_value
-        sampled_image = metropolis_sampler.convert_from_ising_to_image(image)
-        sampled_image = metropolis_sampler.restore_channels(sampled_image, 3)  # restored image
+        sampled_image = images_processing.convert_from_ising_to_image(image)
+        sampled_image = images_processing.restore_channels(sampled_image, 3)  # restored image
         images_processing.save_image(
             'metropolis_noise_ising_beta={0}_iter={1}'.format(beta, iterations), 'jpg',
             sampled_image,
@@ -64,7 +64,7 @@ def run_random_metropolis_with_noise(image):
     image = metropolis_sampler.reduce_channels_for_sampler(image)
     original_image = metropolis_sampler.convert_image_to_ising_model(image)
     sampled_image = original_image
-    iterations = 10 * image.shape[0] * image.shape[1]  # the overall number of pixels
+    iterations = image.shape[0] * image.shape[1]  # the overall number of pixels
     initial_beta = 0.3
     beta_difference = 0.1  # delta
     # beta_range = arithmetic_progression_series(initial_beta, beta_difference, 10)
@@ -89,7 +89,7 @@ def run_random_metropolis_with_noise(image):
     sampled_image = metropolis_sampler.restore_channels(sampled_image, 3)  # restored image
     # save to the current directory (testing)
 
-    images_processing.save_image('10x_iters_updated_noise_model_4neighbors_beta={0}'.format(beta), 'jpg', sampled_image,
+    images_processing.save_image('updated_noise_model_4neighbors_beta={0}'.format(beta), 'jpg', sampled_image,
                                  '')
 
 # make it possible to run the script from the command line. the possible requirement is to run this script from the directory where the target image is located
@@ -97,9 +97,9 @@ def denoising_pipeline(image_name, beta, iterations, noise_probability, neighbor
     # read the image
     original_image = cv2.imread(image_name)
     # reduce channels
-    original_image = metropolis_sampler.reduce_channels_for_sampler(original_image)
+    original_image = images_processing.reduce_channels_for_sampler(original_image)
     # convert to Ising
-    original_image = metropolis_sampler.convert_image_to_ising_model(original_image)
+    original_image = images_processing.convert_image_to_ising_model(original_image)
     # create a copy of the image to which the changes will be applied
     sampled_image = original_image
     # accept beta as an argument
@@ -132,9 +132,9 @@ def denoising_pipeline(image_name, beta, iterations, noise_probability, neighbor
         if u < posterior:
             sampled_image[current_site] = flipped_value
     # convert back from Ising
-    sampled_image = metropolis_sampler.convert_from_ising_to_image(sampled_image)
+    sampled_image = images_processing.convert_from_ising_to_image(sampled_image)
     # restore channels
-    sampled_image = metropolis_sampler.restore_channels(sampled_image, 3)  # restored image
+    sampled_image = images_processing.restore_channels(sampled_image, 3)  # restored image
     # create a separate folder to save the result with parameters specified
     format = imghdr.what(image_name)
     print('success')
@@ -143,6 +143,5 @@ def denoising_pipeline(image_name, beta, iterations, noise_probability, neighbor
 
 if __name__ == '__main__':
     #start = datetime.datetime.now()
-    #noised = cv2.imread('brain4_noise5%.jpg')
-    denoising_pipeline('brain4_noise5%.jpg', 0.8, 100000, 0.05, 8)
-    #run_random_metropolis_with_noise(noised)
+    original_image = cv2.imread('Noisy images/noised_10.0%_grumpy_cat.jpg')
+    denoising_pipeline('Noisy images/noised_10.0%_grumpy_cat.jpg', 0.8, 1000, 0.1, 8)

@@ -2,25 +2,9 @@ import numpy as np
 import timeit
 import random
 import cython
+from MCMC import images_processing
 from math import exp, log
 import cv2
-
-
-# TODO: move to the images_processing module
-def convert_image_to_ising_model(image):
-    """Convert the image to the Ising model representation (with a spin space = {-1, 1})."""
-    image[np.where(image == [0])] = [-1]
-    image[np.where(image == [255])] = [1]
-    return image
-
-
-# TODO: move to the images_processing module
-def convert_from_ising_to_image(image):
-    """Convert the Ising representation of an image to the standard image format with pixels' intensities."""
-    image[np.where(image == [-1])] = [0]
-    image[np.where(image == [1])] = [255]
-    return image
-
 
 # Not used
 def clique_energy(image, pixel_position):
@@ -75,33 +59,6 @@ def acceptance_probability(beta, pi, init_image, current_image, random_pixel_pos
     current_pixel_value = current_image[i][j]
     posterior = -2 * gamma * init_pixel_value * current_pixel_value - 2 * beta * current_pixel_value * neighbors_energy  # posterior function
     return posterior
-
-
-# TODO: think how to improve for better performance when iterating over pixels.
-# TODO: move to the images_processing module
-def reduce_channels_for_sampler(image):
-    """Reduce a 3-channel image to 1-channel image."""
-    w = image.shape[0]  # switch width to height
-    h = image.shape[1]
-    new_image = np.ndarray(shape=(w, h))  # create a new array for pixel values
-    for i in range(w):  # rows
-        for j in range(h):  # columns
-            new_image[i][j] = image[i, j][:1]
-    return new_image
-
-
-# TODO: move to the images_processing module
-def restore_channels(image, n_channels):
-    """
-    Convert 1-channel image to n-channel image.
-
-    :param image: an image in ndarray format
-    :param n_channels: target number of channels
-    :return: ndarray with image's pixels' intensities
-    """
-    width, height, m = image.shape[0], image.shape[1], 1
-    arr = image.reshape(width, height)
-    return np.repeat(arr, m * n_channels).reshape(width, height, n_channels)
 
 
 def within_boundaries(x, dim):
@@ -163,8 +120,8 @@ def run_metropolis_sampler(image):
     pi = 0.05
     # print("Before:")
     # print(image.shape)
-    image = reduce_channels_for_sampler(image)  # convert a 3-channel image to 1-channel one
-    image = convert_image_to_ising_model(image)  # initial image
+    image = images_processing.reduce_channels_for_sampler(image)  # convert a 3-channel image to 1-channel one
+    image = images_processing.convert_image_to_ising_model(image)  # initial image
     init_image = image
     current_image = init_image
     width, height = image.shape[0], image.shape[1]  # dimensions
@@ -177,8 +134,8 @@ def run_metropolis_sampler(image):
         random_number = random.random()
         if np.log(random_number) < alpha.any():
             current_image[i][j] = flipped_value
-    sampled_image = convert_from_ising_to_image(current_image)
-    sampled_image = restore_channels(sampled_image, 3)
+    sampled_image = images_processing.convert_from_ising_to_image(current_image)
+    sampled_image = images_processing.restore_channels(sampled_image, 3)
     print(sampled_image.shape)
     cv2.imwrite('testingiter={}.jpg'.format(len(iterations)), sampled_image)  # should be a separate function
 

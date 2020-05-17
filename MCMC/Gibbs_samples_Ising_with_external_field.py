@@ -1,8 +1,6 @@
 from MCMC import metropolis_sampler
 from MCMC import images_processing
 from MCMC.services.auxiliary_methods import arithmetic_progression_series
-
-import cv2
 import numpy as np
 import random
 
@@ -31,8 +29,8 @@ def sum_of_all_spins(image):
 
 # Goal: to get a posterior distribution (the most probable image) by sampling
 def run_gibbs_with_external_field(image):
-    #image = metropolis_sampler.reduce_channels_for_sampler(image)
-    image = metropolis_sampler.convert_image_to_ising_model(image)
+    #image = images_processing.reduce_channels_for_sampler(image)
+    image = images_processing.convert_image_to_ising_model(image)
     iterations = 2
     initial_beta = 0.3
     beta_difference = 0.1
@@ -53,32 +51,16 @@ def run_gibbs_with_external_field(image):
                     image[i, j] = 1
                 else:
                     image[i, j] = -1
-    sampled_image = metropolis_sampler.convert_from_ising_to_image(image)
-    #sampled_image = metropolis_sampler.restore_channels(sampled_image, 3)  # restored image
+    sampled_image = images_processing.convert_from_ising_to_image(image)
+    #sampled_image = images_processing.restore_channels(sampled_image, 3)  # restored image
     images_processing.save_image(
         'Denoised images/testing_no_channel_reduction/metropolis_noise_ising_chest_b={0}_noise={1}'.format(beta, NOISE_LEVEL),
         'jpeg', sampled_image)
 
 
-## Note: potentials() function works as expected
-def testing_potentials_calculation(image):
-    image = metropolis_sampler.reduce_channels_for_sampler(image)
-    image = metropolis_sampler.convert_image_to_ising_model(image)
-    # energy = metropolis_sampler.potentials(image, (5, 5))
-    energy = neighbors_energy(image, (5, 5))
-    print("current pixel value")
-    print(image[(5, 5)])
-    neighbors = metropolis_sampler.get_all_neighbors((5, 5), image.shape)
-    print("values of neighbors")
-    for coord in neighbors:
-        print(image[coord])
-    print("energy")
-    print(energy)
-
-
 # Test if all the pixel values are equal to either +1 or -1
 def testing_conversion_to_ising(image):
-    image = metropolis_sampler.convert_image_to_ising_model(image)
+    image = images_processing.convert_image_to_ising_model(image)
     h = image.shape[0]
     w = image.shape[1]
     for y in range(0, h):
@@ -86,53 +68,5 @@ def testing_conversion_to_ising(image):
             if np.abs(image[y, x].any()) > 1:
                 print(image[y, x])
 
-
-def testing_channels_reduction(image):
-    image = metropolis_sampler.reduce_channels_for_sampler(image)
-    h = image.shape[0]
-    w = image.shape[1]
-    for y in range(0, h):
-        for x in range(0, w):
-            if not isinstance(image[y, x],
-                              np.float64):  # we converted the array with 3 channels to an array with 1 channel. therefore, each element must be one number (of type float64 - default type of ndarray)
-                print(image[y, x])
-            else:
-                if (image[
-                    y, x] != 255 and image[
-                    y, x] != 0):  # check also if all the values that are left after conversion to b&w image, are 0 or 255 (binary)
-                    print(image[y, x])
-
-
 if __name__ == '__main__':
-    # image = cv2.imread('noised_chest5%.jpeg')
-    # image = cv2.imread('chest_bw.jpeg')
-    # image = noiser.sp_noise(image, 0.05)
-    # print('before:')
-    # print(image.shape)
-    # image = metropolis_sampler.reduce_channels_for_sampler(image)
-    # print('after: ')
-    # print(image.shape)
-    image = cv2.imread('noised_chest5%.jpeg')
-    run_gibbs_with_external_field(image)
-    '''
-    image1 = cv2.imread('chest.jpeg')
-    print('before:')
-    print(image1.shape)
-    image1 = images_processing.convert_to_bw_and_return(image1)
-    print(image1)
-
-    print('after:')
-    print(image1.shape)
-    testing_channels_reduction(image1)'''
-    # testing_channels_reduction(image)
-    # print(image.item(5, 5, 1))
-    # print(image[5, 5])
-    # print('image size:')
-    # print(image.shape)
-    # image = images_processing.convert_to_bw_and_greyscale('chest.jpeg')
-    # print(image)
-    # testing_potentials_calculation(image)
-    # run_gibbs_without_noise(image)
-    # image = noising.sp_noise(image, 0.05)
-    # noising.save_image('noised_chest', 'jpeg', image)
-    # images_processing.convert_to_bw_and_greyscale(image, 'chest', 'jpeg')
+    pass
