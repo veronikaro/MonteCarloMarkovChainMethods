@@ -77,6 +77,22 @@ def compare_with_metrics(imageX, imageY, name):
     plt.show()
 
 
+def compare_with_wrong_pixels_metric(imageX, imageY, name):
+    """Compare the given images using the value of the wrong pixels percentage loss function."""
+    wrong_pixels_perc = percentage_of_wrong_pixels(imageX, imageY)
+    figure = plt.figure(name)
+    plt.suptitle("Percentage of wrong pixels: {0}".format(wrong_pixels_perc))
+    # add the first image to the plot
+    axis_1 = figure.add_subplot(1, 2, 1)
+    plt.imshow(imageX, cmap=plt.cm.gray)
+    plt.axis(False)
+    # add the second image to the plot
+    axis_2 = figure.add_subplot(1, 2, 2)
+    plt.imshow(imageY, cmap=plt.cm.gray)
+    plt.axis(False)
+    plt.show()
+
+
 # The higher the PSNR, the better the quality of the reconstructed image.
 def PSNR(imageX, imageY):
     max_pixel = 255.0
@@ -85,10 +101,13 @@ def PSNR(imageX, imageY):
 
 
 if __name__ == '__main__':
-    # Read directly from the file system
-    imageX = cv2.imread('Images/cat_bw.png')
-    imageY = cv2.imread('AfterSampling2000000.png')
-    compare_with_metrics(imageX, imageY, 'Original vs Denoised images')
+    original = cv2.imread('Binary images/bw_grumpy_cat.jpg')
+    denoised = cv2.imread('Results/result_beta=0.8_noise_p=0.1_iter=1687500_neighbors=8.jpeg')
+    #compare_with_metrics(original, denoised, 'Original vs Denoised images')
+    compare_with_wrong_pixels_metric(original, denoised, 'Original vs Denoised images')
+    noisy = cv2.imread('Noisy images/noised_10.0%_grumpy_cat.jpg')
+    #compare_with_metrics(original, noisy, 'Original vs Noisy images')
+    compare_with_wrong_pixels_metric(original, noisy, 'Original vs Noisy images')
     # score, diff = ssi(imageX, imageY)
     # print("SSIM: {}".format(score))
     # cv2.imshow("Difference", diff)

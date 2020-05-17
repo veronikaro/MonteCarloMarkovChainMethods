@@ -73,13 +73,19 @@ def denoising_pipeline(image_name, beta, iterations, noise_probability, neighbor
         'result_beta={0}_noise_p={1}_iter={2}_neighbors={3}'.format(beta, noise_probability, iterations,
                                                                     neighbors_number), format, sampled_image,
         directory='Results')
-    print('success')
 
 
 if __name__ == '__main__':
-    arguments = sys.argv
-    image_name, beta, iterations, noise_probability, neighbors_number = arguments[1:]
-    denoising_pipeline(image_name, float(beta), int(iterations), float(noise_probability), int(neighbors_number))
-    #im = cv2.imread('Noisy images/noised_10.0%_grumpy_cat.jpg')
-    #pixels_number = im.shape[0] * im.shape[1]
-    #denoising_pipeline('Noisy images/noised_10.0%_grumpy_cat.jpg', beta=.8, iterations=pixels_number, noise_probability=.1, neighbors_number=8)
+    #arguments = sys.argv
+    #image_name, beta, iterations, noise_probability, neighbors_number = arguments[1:]
+    #denoising_pipeline(image_name, float(beta), int(iterations), float(noise_probability), int(neighbors_number))
+    #print('successfully denoised')
+    im = cv2.imread('Noisy images/noised_10.0%_grumpy_cat.jpg')
+    pixels_number = im.shape[0] * im.shape[1]
+    denoising_pipeline('Noisy images/noised_10.0%_grumpy_cat.jpg', beta=1.0, iterations=pixels_number, noise_probability=.1, neighbors_number=8)
+    denoising_pipeline('Noisy images/noised_10.0%_grumpy_cat.jpg', beta=1.1, iterations=pixels_number, noise_probability=.1, neighbors_number=8)
+    denoising_pipeline('Noisy images/noised_10.0%_grumpy_cat.jpg', beta=1.2, iterations=pixels_number, noise_probability=.1, neighbors_number=8)
+    denoising_pipeline('Noisy images/noised_10.0%_grumpy_cat.jpg', beta=1.3, iterations=pixels_number, noise_probability=.1, neighbors_number=8)
+    denoising_pipeline('Noisy images/noised_10.0%_grumpy_cat.jpg', beta=1.4, iterations=pixels_number, noise_probability=.1, neighbors_number=8)
+    denoising_pipeline('Noisy images/noised_10.0%_grumpy_cat.jpg', beta=1.5, iterations=pixels_number, noise_probability=.1, neighbors_number=8)
+    denoising_pipeline('Noisy images/noised_10.0%_grumpy_cat.jpg', beta=1.6, iterations=pixels_number, noise_probability=.1, neighbors_number=8)

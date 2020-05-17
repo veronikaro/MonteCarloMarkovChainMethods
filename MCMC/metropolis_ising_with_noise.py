@@ -137,7 +137,7 @@ def denoising_pipeline(image_name, beta, iterations, noise_probability, neighbor
     sampled_image = images_processing.restore_channels(sampled_image, 3)  # restored image
     # create a separate folder to save the result with parameters specified
     format = imghdr.what(image_name)
-    print('success')
+    print('successfully denoised')
     images_processing.save_image('result_beta={}_noise_p={}_iter={}_neighbors={}', format, sampled_image, directory='Results')
 
 

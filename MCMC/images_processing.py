@@ -126,4 +126,4 @@ if __name__ == '__main__':
     arguments = sys.argv
     original_image_name, noise_probability = arguments[1:]
     prepare_image_for_sampler_pipeline(original_image_name, float(noise_probability))
-    print('success')
+    print('successfully converted to b&w and added some noise')
