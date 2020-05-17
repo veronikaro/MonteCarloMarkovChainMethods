@@ -29,7 +29,7 @@ def beta_vs_metric_value(errors_dict):  # , noise_type, noise_level, sampler_typ
     x, y = zip(*lists)  # unpack a list of pairs into two tuples
     plt.xticks(x)
     plt.xlabel('beta values')
-    plt.ylabel('PSNR')
+    plt.ylabel('percentage of wrong pixels')
     plt.plot(x, y)
     plt.show()
 
