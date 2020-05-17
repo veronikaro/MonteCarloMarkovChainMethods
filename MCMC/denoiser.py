@@ -5,7 +5,7 @@ import sys
 import numpy as np
 import random
 from imghdr import what
-
+from MCMC.services import auxiliary_methods
 
 def noise(p, sampled_pixel_value, original_pixel_value):
     return metropolis_sampler.indicator_func(sampled_pixel_value, original_pixel_value) * np.log((1 - p) / p)
@@ -80,12 +80,9 @@ if __name__ == '__main__':
     #image_name, beta, iterations, noise_probability, neighbors_number = arguments[1:]
     #denoising_pipeline(image_name, float(beta), int(iterations), float(noise_probability), int(neighbors_number))
     #print('successfully denoised')
-    im = cv2.imread('Noisy images/noised_10.0%_grumpy_cat.jpg')
+    im = cv2.imread('Noisy images/noised_20.0%_grumpy_cat.jpeg')
     pixels_number = im.shape[0] * im.shape[1]
-    denoising_pipeline('Noisy images/noised_10.0%_grumpy_cat.jpg', beta=1.0, iterations=pixels_number, noise_probability=.1, neighbors_number=8)
-    denoising_pipeline('Noisy images/noised_10.0%_grumpy_cat.jpg', beta=1.1, iterations=pixels_number, noise_probability=.1, neighbors_number=8)
-    denoising_pipeline('Noisy images/noised_10.0%_grumpy_cat.jpg', beta=1.2, iterations=pixels_number, noise_probability=.1, neighbors_number=8)
-    denoising_pipeline('Noisy images/noised_10.0%_grumpy_cat.jpg', beta=1.3, iterations=pixels_number, noise_probability=.1, neighbors_number=8)
-    denoising_pipeline('Noisy images/noised_10.0%_grumpy_cat.jpg', beta=1.4, iterations=pixels_number, noise_probability=.1, neighbors_number=8)
-    denoising_pipeline('Noisy images/noised_10.0%_grumpy_cat.jpg', beta=1.5, iterations=pixels_number, noise_probability=.1, neighbors_number=8)
-    denoising_pipeline('Noisy images/noised_10.0%_grumpy_cat.jpg', beta=1.6, iterations=pixels_number, noise_probability=.1, neighbors_number=8)
+    beta_values = auxiliary_methods.arithmetic_progression_series(0.8, 0.1, 10)
+    for b in beta_values:
+        denoising_pipeline('Noisy images/noised_20.0%_grumpy_cat.jpeg', beta=b, iterations=pixels_number,
+                           noise_probability=.2, neighbors_number=8)
