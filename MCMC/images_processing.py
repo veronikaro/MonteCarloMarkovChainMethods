@@ -115,11 +115,13 @@ def prepare_image_for_sampler_pipeline(original_image_name, noise_probability):
     original_image = cv2.imread(original_image_name)
     bw_image = convert_to_bw(original_image)
     # save the black & white version of the image
-    save_image('bw_{0}'.format(original_image_name), bw_image, 'Binary images')
+    format = what(original_image_name)
+    filename = path.splitext(original_image_name)[0] # without extension
+    save_image('bw_{0}'.format(filename), format, bw_image, 'Binary images')
     noised_bw_image = sp_noise(bw_image, noise_probability)
     # save the noised version of the black & white image
     noised_pixels_percentage = noise_probability * 100
-    save_image('noised_{0}%_{1}'.format(noised_pixels_percentage, original_image_name), noised_bw_image, 'Noisy images')
+    save_image('noised_{0}%_{1}'.format(noised_pixels_percentage, filename), format, noised_bw_image, 'Noisy images')
 
 
 if __name__ == '__main__':
