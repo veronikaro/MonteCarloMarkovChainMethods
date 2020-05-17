@@ -3,9 +3,10 @@ import matplotlib.pyplot as plt
 from MCMC import images_comparison
 from MCMC.services import auxiliary_methods
 import cv2
-import plotly.express as px
 
 
+# import plotly.express as px
+# import pandas
 # Visualization module
 
 
@@ -13,7 +14,8 @@ import plotly.express as px
 # Instead of beta, we can start with T
 
 # TODO: change the simplified version to a more detailed one
-def beta_vs_wrong_pixels(errors_dict):  # , noise_type, noise_level, sampler_type=''):
+# TODO: make a decorator to be able to pass the metric function as an argument
+def beta_vs_metric_value(errors_dict):  # , noise_type, noise_level, sampler_type=''):
     """
     Build a plot with beta values vs wrong pixels percentage and save it to the file. Specify the level of initial noise and a type of sampler used.
     :param errors_dict: a dictionary of beta-error pairs
@@ -27,7 +29,7 @@ def beta_vs_wrong_pixels(errors_dict):  # , noise_type, noise_level, sampler_typ
     x, y = zip(*lists)  # unpack a list of pairs into two tuples
 
     plt.xlabel('beta values')
-    plt.ylabel('percentage of wrong pixels')
+    plt.ylabel('PSNR')
     plt.plot(x, y)
     plt.show()
 
@@ -59,6 +61,7 @@ if __name__ == '__main__':
     original = cv2.imread('../Binary images/bw_grumpy_cat.jpg')
     for beta, im_name in zip(beta_list, images_names):
         denoised = cv2.imread('../Results/{0}'.format(im_name))
-        err = images_comparison.percentage_of_wrong_pixels(original, denoised)
+        # err = images_comparison.percentage_of_wrong_pixels(original, denoised)
+        err = images_comparison.PSNR(original, denoised)
         errors_map[beta] = err
-    beta_vs_wrong_pixels(errors_map)
+    beta_vs_metric_value(errors_map)
