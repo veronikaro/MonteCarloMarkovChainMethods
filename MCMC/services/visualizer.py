@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from MCMC import images_comparison
 from MCMC.services import auxiliary_methods
+from MCMC.services import file_worker
 import cv2
 
 
@@ -66,3 +67,5 @@ if __name__ == '__main__':
         #err = images_comparison.PSNR(original, denoised)
         errors_map[beta] = err
     beta_vs_metric_value(errors_map)
+    # TODO: add saving data to CSV
+    file_worker.write_to_csv_file('beta_vs_wrong_pixels_perc.csv', errors_map, ('beta', 'wrong pixels'))
