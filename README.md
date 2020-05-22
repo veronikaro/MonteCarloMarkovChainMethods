@@ -20,3 +20,38 @@ Denoising techniques can be especially beneficial for real-time computer vision 
 * images_processing.py (for converting the image from a current directory to its b&w version and adding noise to it)
 * metropolis_ising_with_noise.py (run algorithm & save results for a given image)
 * metropolis_ising_no_noise.py
+
+Note that Python 3.x must be installed on your machine.
+
+## How to run MCMC/images_processing.py:
+Run this script from the command line to get two versions of an image in separate folders (`/Binary images` and `/Noisy images`. The folders are not created if already exist):
+1. Black & white
+2. Noisy
+
+*Arguments*:
+
+* original_image_name - the absolute or relative path to the original image (can be colored or greyscale)
+* noise_probability - the probability of flip noise to add to the image
+
+*Example of running the script*:
+
+`> python images_processing.py grumpy_cat.jpg 0.5`
+
+
+## How to run MCMC/denoiser.py:
+
+Saves the results of denoising to the folder 'Results' (it's created if doesn't exist)
+
+*Arguments*:
+
+* image_name - the absolute or relative path to the noised black & white image
+* beta - an essential parameter of the sampler, an inverse to the temperature (1/T) (any float number)
+* iterations - the number of iterations
+* noise_probability - the assumed probability of the flip noise in the image
+* neighbors_number: the size of the neighborhood structure. it's used when calculating the energy of the neighborhood. the default is 8. can be switched to 4
+
+*Example of running the script*:
+
+`> python denoiser.py brain4_noise5%.jpg 0.8 100000 0.05 8`
+
+
