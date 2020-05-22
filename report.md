@@ -8,8 +8,7 @@ Original picture:
 
 Noised with 10% of flip noise:
 
-![]
-(https://raw.githubusercontent.com/veronikaro/MonteCarloMarkovChainMethods/master/MCMC/Noisy%20images/noised_10.0%25_grumpy_cat.jpg?token=AESWBQ6UMMIGN2J3ZVIBLG26ZALE2)
+![](https://raw.githubusercontent.com/veronikaro/MonteCarloMarkovChainMethods/master/MCMC/Noisy%20images/noised_10.0%25_grumpy_cat.jpg?token=AESWBQ6UMMIGN2J3ZVIBLG26ZALE2)
 
 Denoised versions: 
 
