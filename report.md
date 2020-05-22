@@ -23,8 +23,33 @@ Denoised versions:
 
 ## Metrics visualization
 
-Beta values vs the percentage of wrong pixels:
+**Beta values vs the percentage of wrong pixels**:
 
 ![](https://github.com/veronikaro/MonteCarloMarkovChainMethods/blob/master/Images%20%26%20results/Graphs/beta_vs_wrong_pixels_percentage_noise_p%3D0.1_iter%3D1687500_neighbors%3D8.png)
 
-This graph allows to see how the percentage of wrong pixels is decreasing (though this can't be easily seen on the image)
+(probability of noise = **0.1**, iterations = 1687500, neighbors = 8)
+
+![](https://github.com/veronikaro/MonteCarloMarkovChainMethods/blob/master/Images%20%26%20results/Graphs/beta_vs_wrong_pixels_percentage_noise_p%3D0.2_iter%3D1687500_neighbors%3D8.png)
+
+(probability of noise = **0.2**, iterations = 1687500, neighbors = 8)
+
+These graphs allow to see how the percentage of wrong pixels is decreasing (though this can't be easily seen on the image)
+
+
+**Beta values vs PSNR**:
+
+![]
+(https://github.com/veronikaro/MonteCarloMarkovChainMethods/blob/master/Images%20%26%20results/Graphs/beta_vs_psnr_noise_p%3D0.1_iter%3D1687500_neighbors%3D8.png)
+
+(probability of noise = **0.1**, iterations = 1687500, neighbors = 8)
+
+
+![]
+(https://github.com/veronikaro/MonteCarloMarkovChainMethods/blob/master/Images%20%26%20results/Graphs/beta_vs_psnr_noise_p%3D0.2_iter%3D1687500_neighbors%3D8.png)
+
+(probability of noise = **0.2**, iterations = 1687500, neighbors = 8)
+
+These graphs allow to see how PSNR values are increasing with increasing of beta values. 
+
+
+
