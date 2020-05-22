@@ -33,7 +33,7 @@ Denoised versions:
 
 (probability of noise = **0.2**, iterations = 1687500, neighbors = 8)
 
-These graphs allow to see how the percentage of wrong pixels is decreasing (though this can't be easily seen on the image)
+These graphs allow us to see how the percentage of wrong pixels is decreasing (though this can't be easily seen on the image)
 
 
 **Beta values vs PSNR**:
@@ -47,7 +47,7 @@ These graphs allow to see how the percentage of wrong pixels is decreasing (thou
 
 (probability of noise = **0.2**, iterations = 1687500, neighbors = 8)
 
-These graphs allow to see how PSNR values are increasing with increasing of beta values. 
+These graphs allow us to see how PSNR values are increasing with increasing beta values. 
 
 
 
