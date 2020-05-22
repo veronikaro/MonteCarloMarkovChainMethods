@@ -80,10 +80,10 @@ if __name__ == '__main__':
     #image_name, beta, iterations, noise_probability, neighbors_number = arguments[1:]
     #denoising_pipeline(image_name, float(beta), int(iterations), float(noise_probability), int(neighbors_number))
     #print('successfully denoised')
-    im = cv2.imread('Noisy images/noised_20.0%_grumpy_cat.jpeg')
+    im = cv2.imread('Noisy images/noised_40.0%_grumpy_cat.jpeg')
     pixels_number = im.shape[0] * im.shape[1]
     beta_values = auxiliary_methods.arithmetic_progression_series(0.8, 0.1, 10)
     for b in beta_values:
-        denoising_pipeline('Noisy images/noised_20.0%_grumpy_cat.jpeg', beta=b, iterations=pixels_number,
-                           noise_probability=.2, neighbors_number=8)
+        denoising_pipeline('Noisy images/noised_40.0%_grumpy_cat.jpeg', beta=b, iterations=pixels_number,
+                           noise_probability=.4, neighbors_number=8)
     # TODO: next step is to evaluate performance for denoising of 20%-noised image and build corresponding graphs

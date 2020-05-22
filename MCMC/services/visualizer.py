@@ -16,7 +16,7 @@ import cv2
 
 # TODO: change the simplified version to a more detailed one
 # TODO: make a decorator to be able to pass the metric function as an argument
-def beta_vs_metric_value(errors_dict):  # , noise_type, noise_level, sampler_type=''):
+def beta_vs_metric_value(errors_dict, metric_type):  # , noise_type, noise_level, sampler_type=''):
     """
     Build a plot with beta values vs wrong pixels percentage and save it to the file. Specify the level of initial noise and a type of sampler used.
     :param errors_dict: a dictionary of beta-error pairs
@@ -30,7 +30,7 @@ def beta_vs_metric_value(errors_dict):  # , noise_type, noise_level, sampler_typ
     x, y = zip(*lists)  # unpack a list of pairs into two tuples
     plt.xticks(x)
     plt.xlabel('beta values')
-    plt.ylabel('percentage of wrong pixels')
+    plt.ylabel(metric_type)
     plt.plot(x, y)
     plt.show()
 
@@ -49,16 +49,16 @@ def save_graph_to_file(plot, directory):
 if __name__ == '__main__':
     beta_list = auxiliary_methods.arithmetic_progression_series(0.8, 0.1, 10)
     errors_map = dict()
-    images_names = ['result_beta=0.8_noise_p=0.2_iter=1687500_neighbors=8.jpeg',
-                    'result_beta=0.9_noise_p=0.2_iter=1687500_neighbors=8.jpeg',
-                    'result_beta=1.0_noise_p=0.2_iter=1687500_neighbors=8.jpeg',
-                    'result_beta=1.1_noise_p=0.2_iter=1687500_neighbors=8.jpeg',
-                    'result_beta=1.2_noise_p=0.2_iter=1687500_neighbors=8.jpeg',
-                    'result_beta=1.3_noise_p=0.2_iter=1687500_neighbors=8.jpeg',
-                    'result_beta=1.4_noise_p=0.2_iter=1687500_neighbors=8.jpeg',
-                    'result_beta=1.5_noise_p=0.2_iter=1687500_neighbors=8.jpeg',
-                    'result_beta=1.6_noise_p=0.2_iter=1687500_neighbors=8.jpeg',
-                    'result_beta=1.7_noise_p=0.2_iter=1687500_neighbors=8.jpeg',]
+    images_names = ['result_beta=0.8_noise_p=0.4_iter=1687500_neighbors=8.jpeg',
+                    'result_beta=0.9_noise_p=0.4_iter=1687500_neighbors=8.jpeg',
+                    'result_beta=1.0_noise_p=0.4_iter=1687500_neighbors=8.jpeg',
+                    'result_beta=1.1_noise_p=0.4_iter=1687500_neighbors=8.jpeg',
+                    'result_beta=1.2_noise_p=0.4_iter=1687500_neighbors=8.jpeg',
+                    'result_beta=1.3_noise_p=0.4_iter=1687500_neighbors=8.jpeg',
+                    'result_beta=1.4_noise_p=0.4_iter=1687500_neighbors=8.jpeg',
+                    'result_beta=1.5_noise_p=0.4_iter=1687500_neighbors=8.jpeg',
+                    'result_beta=1.6_noise_p=0.4_iter=1687500_neighbors=8.jpeg',
+                    'result_beta=1.7_noise_p=0.4_iter=1687500_neighbors=8.jpeg',]
 
     original = cv2.imread('../Binary images/bw_grumpy_cat.jpg')
     for beta, im_name in zip(beta_list, images_names):
@@ -66,6 +66,7 @@ if __name__ == '__main__':
         err = images_comparison.percentage_of_wrong_pixels(original, denoised)
         #err = images_comparison.PSNR(original, denoised)
         errors_map[beta] = err
-    beta_vs_metric_value(errors_map)
-    # TODO: add saving data to CSV
+    beta_vs_metric_value(errors_map, 'wrong pixels percentage')
+    parameters_to_write = ['beta', 'wrong pixels', 'noise_p', 'iterations', 'neighbors']
     file_worker.write_to_csv_file('beta_vs_wrong_pixels_perc.csv', errors_map, ('beta', 'wrong pixels'))
+    #file_worker.write_to_csv_file('beta_vs_psnr.csv', errors_map, ('beta', 'PSNR'))
