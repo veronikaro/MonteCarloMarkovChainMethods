@@ -63,7 +63,7 @@ These graphs allow us to see how the percentage of wrong pixels is decreasing (t
 
 (probability of noise = **0.4**, iterations = 1687500, neighbors = 8)
 
-These graphs allow us to see how PSNR values are increasing with increasing beta values. 
+These graphs allow us to see how PSNR values are increasing with increasing beta values. As well as evaluate the smoothness of curves for different noise percentages (?)
 
 
 
