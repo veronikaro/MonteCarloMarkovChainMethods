@@ -4,7 +4,7 @@
 
 Original picture:
 
-![](https://raw.githubusercontent.com/veronikaro/MonteCarloMarkovChainMethods/master/MCMC/Binary%20images/bw_grumpy_cat.jpg?token=AESWBQ3U2AL774UFOAX2YE26ZAKNM)
+![](https://github.com/veronikaro/MonteCarloMarkovChainMethods/blob/master/MCMC/Binary%20images/bw_grumpy_cat.jpg)
 
 Noised with 10% of flip noise:
 
