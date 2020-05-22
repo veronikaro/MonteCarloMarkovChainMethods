@@ -38,14 +38,12 @@ These graphs allow to see how the percentage of wrong pixels is decreasing (thou
 
 **Beta values vs PSNR**:
 
-![]
-(https://github.com/veronikaro/MonteCarloMarkovChainMethods/blob/master/Images%20%26%20results/Graphs/beta_vs_psnr_noise_p%3D0.1_iter%3D1687500_neighbors%3D8.png)
+![](https://github.com/veronikaro/MonteCarloMarkovChainMethods/blob/master/Images%20%26%20results/Graphs/beta_vs_psnr_noise_p%3D0.1_iter%3D1687500_neighbors%3D8.png)
 
 (probability of noise = **0.1**, iterations = 1687500, neighbors = 8)
 
 
-![]
-(https://github.com/veronikaro/MonteCarloMarkovChainMethods/blob/master/Images%20%26%20results/Graphs/beta_vs_psnr_noise_p%3D0.2_iter%3D1687500_neighbors%3D8.png)
+![](https://github.com/veronikaro/MonteCarloMarkovChainMethods/blob/master/Images%20%26%20results/Graphs/beta_vs_psnr_noise_p%3D0.2_iter%3D1687500_neighbors%3D8.png)
 
 (probability of noise = **0.2**, iterations = 1687500, neighbors = 8)
 
