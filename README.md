@@ -18,8 +18,7 @@ Denoising techniques can be especially beneficial for real-time computer vision 
 ## Scripts that can be run separately from the command line:
 
 * images_processing.py (for converting the image from a current directory to its b&w version and adding noise to it)
-* metropolis_ising_with_noise.py (run algorithm & save results for a given image)
-* metropolis_ising_no_noise.py
+* denoiser.py (run the Metropolis sampler for the noisy Ising model & save results for a given image)
 
 Note that Python 3.x must be installed on your machine.
 
