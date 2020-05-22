@@ -1,12 +1,12 @@
 ## Image restoration using Markov random field models
-This repository holds implementation of Markov chain Monte Carlo methods, namely Gibbs Sampler and Metropolis Sampler. Its purpose is to show how to combine Bayesian approach, Markov Random Field models, and the Ising Model for restoring monochrome (black & white) images from noise.  
+This repository holds the implementation of Markov chain Monte Carlo methods, namely Gibbs Sampler and Metropolis Sampler. Its purpose is to show how to combine the Bayesian approach, Markov Random Field models, and the Ising Model for restoring monochrome (black & white) images from noise.  
 
 #### Thoughts: 
 Denoising techniques can be especially beneficial for real-time computer vision applications & improving performance of neural networks that deal with classification & detection
 
 ## Notes on using the samplers
 1. Convert an image to its black & white version
-2. Add a noise to it using noiser.py
+2. Add noise to it using noiser.py
 3. Reduce the number of channels from 3 to 1
 4. Convert the image to the Ising model representation
 
