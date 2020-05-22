@@ -48,7 +48,7 @@ Saves the results of denoising to the folder 'Results' (it's created if doesn't 
 * beta - an essential parameter of the sampler, an inverse to the temperature (1/T) (any float number)
 * iterations - the number of iterations
 * noise_probability - the assumed probability of the flip noise in the image
-* neighbors_number: the size of the neighborhood structure. it's used when calculating the energy of the neighborhood. the default is 8. can be switched to 4
+* neighbors_number - the size of the neighborhood structure. it's used when calculating the energy of the neighborhood. the default is 8. can be switched to 4
 
 *Example of running the script*:
 
