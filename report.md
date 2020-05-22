@@ -23,7 +23,7 @@ Denoised versions:
 
 # Metrics visualization
 
-##Beta values vs the percentage of wrong pixels:
+## Beta values vs the percentage of wrong pixels:
 
 ![](https://github.com/veronikaro/MonteCarloMarkovChainMethods/blob/master/Images%20%26%20results/Graphs/beta_vs_wrong_pixels_percentage_noise_p%3D0.1_iter%3D1687500_neighbors%3D8.png)
 
@@ -36,7 +36,7 @@ Denoised versions:
 These graphs allow us to see how the percentage of wrong pixels is decreasing (though this can't be easily seen on the image)
 
 
-##Beta values vs PSNR:
+## Beta values vs PSNR:
 
 ![](https://github.com/veronikaro/MonteCarloMarkovChainMethods/blob/master/Images%20%26%20results/Graphs/beta_vs_psnr_noise_p%3D0.1_iter%3D1687500_neighbors%3D8.png)
 
